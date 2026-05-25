@@ -168,7 +168,7 @@ function buildTabs() {
 function loadSet() {
   const set = MATCHING_SETS[activeSet];
   matched = 0; wrong = 0; selectedQ = null;
-  answers = shuffle(set.pairs.map((p, i) => ({ text: p.a, index: i })));
+  answers = shuffle(set.pairs.map((p, i) => ({ text: p.a, index: i, en: p.aen })));
   renderGrid();
   document.getElementById('result-banner').style.display = 'none';
   updateScore();
@@ -185,9 +185,9 @@ function renderGrid() {
     const el = document.createElement('div');
     el.className = 'item';
     el.dataset.qindex = i;
+    el.dataset.en = pair.qen;
     el.textContent = pair.q;
     initDrag(el, i);
-    initMatchPeek(el, pair.a);
     qcol.appendChild(el);
   });
 
@@ -195,8 +195,9 @@ function renderGrid() {
     const el = document.createElement('div');
     el.className = 'item';
     el.dataset.aindex = i;
+    el.dataset.en = ans.en;
     el.textContent = ans.text;
-    el.addEventListener('click', () => selectAnswer(i));
+    initAnswerItem(el, i);
     acol.appendChild(el);
   });
 }
@@ -204,18 +205,22 @@ function renderGrid() {
 function getQEl(i) { return document.querySelector(`.item[data-qindex="${i}"]`); }
 function getAEl(i) { return document.querySelector(`.item[data-aindex="${i}"]`); }
 
-function initMatchPeek(el, correctAnswer) {
-  const tooltip = document.getElementById('match-peek');
+function showPeek(text) {
+  const t = document.getElementById('match-peek');
+  t.textContent = text;
+  t.classList.add('visible');
+}
+function hidePeek() {
+  document.getElementById('match-peek').classList.remove('visible');
+}
+
+function initAnswerItem(el, aPos) {
   let peekTimer = null, isPeeking = false, ptrMoved = false, ptrStartX = 0, ptrStartY = 0;
   el.addEventListener('pointerdown', e => {
     if (el.classList.contains('matched')) return;
     ptrMoved = false; ptrStartX = e.clientX; ptrStartY = e.clientY;
     peekTimer = setTimeout(() => {
-      if (!ptrMoved) {
-        tooltip.textContent = correctAnswer;
-        tooltip.classList.add('visible');
-        isPeeking = true;
-      }
+      if (!ptrMoved) { isPeeking = true; showPeek(el.dataset.en); }
     }, 400);
   });
   el.addEventListener('pointermove', e => {
@@ -224,13 +229,14 @@ function initMatchPeek(el, correctAnswer) {
       if (!isPeeking) clearTimeout(peekTimer);
     }
   });
-  const endPeek = () => {
+  el.addEventListener('pointerup', () => {
     clearTimeout(peekTimer);
-    tooltip.classList.remove('visible');
-    isPeeking = false;
-  };
-  el.addEventListener('pointerup', endPeek);
-  el.addEventListener('pointercancel', endPeek);
+    if (isPeeking) { hidePeek(); isPeeking = false; }
+    else if (!ptrMoved) { selectAnswer(aPos); }
+  });
+  el.addEventListener('pointercancel', () => {
+    clearTimeout(peekTimer); hidePeek(); isPeeking = false;
+  });
 }
 
 // ── Drag-to-match ──
@@ -248,7 +254,14 @@ function initDrag(el, qIndex) {
       offsetY: e.clientY - rect.top,
       width: rect.width,
       ghost: null,
-      moved: false
+      moved: false,
+      peeking: false,
+      peekTimer: setTimeout(() => {
+        if (dragState && !dragState.moved) {
+          dragState.peeking = true;
+          showPeek(el.dataset.en);
+        }
+      }, 400)
     };
     document.addEventListener('pointermove', onDragMove, { passive: false });
     document.addEventListener('pointerup', onDragEnd);
@@ -263,6 +276,7 @@ function onDragMove(e) {
 
   if (!dragState.moved && Math.hypot(dx, dy) > 6) {
     dragState.moved = true;
+    clearTimeout(dragState.peekTimer);
     const g = dragState.el.cloneNode(true);
     g.classList.add('drag-ghost');
     g.style.width = dragState.width + 'px';
@@ -296,14 +310,20 @@ function onDragEnd(e) {
 
   if (!dragState) return;
 
+  clearTimeout(dragState.peekTimer);
+  hidePeek();
+
   if (dragState.ghost) {
     dragState.ghost.remove();
     dragState.el.classList.remove('dragging');
   }
 
+  if (dragState.peeking) {
+    dragState = null;
+    return;
+  }
+
   if (dragState.moved) {
-    dragState.ghost = null;
-    dragState.ghost; // no-op, ghost already removed
     const target = document.elementFromPoint(e.clientX, e.clientY);
     const ael = target ? target.closest('.item[data-aindex]') : null;
     if (ael) doMatch(parseInt(ael.dataset.aindex), dragState.qIndex);
