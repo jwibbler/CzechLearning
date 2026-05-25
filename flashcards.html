@@ -171,18 +171,23 @@ let current = 0;
 let known = new Set();
 let flipped = false;
 
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
 function buildDeck() {
   deck = VOCAB.filter(v => activeCategory === 'all' || v.category === activeCategory);
+  shuffleArray(deck);
   current = 0;
   flipped = false;
   showCard();
 }
 
 function shuffle() {
-  for (let i = deck.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [deck[i], deck[j]] = [deck[j], deck[i]];
-  }
+  shuffleArray(deck);
   current = 0;
   flipped = false;
   document.getElementById('card-inner').classList.remove('flipped');
