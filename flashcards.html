@@ -49,16 +49,6 @@ header h1 { font-size: 1.4rem; color: #1e293b; }
 }
 .face.back { transform: rotateY(180deg); background: #f8faff; }
 
-/* Visual (emoji) */
-.card-visual {
-  width: 150px; height: 150px; border-radius: 20px; overflow: hidden;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 90px; line-height: 1;
-  margin-bottom: 14px; flex-shrink: 0;
-}
-.card-visual.small {
-  width: 72px; height: 72px; font-size: 44px; margin-bottom: 10px; border-radius: 12px;
-}
 
 .face .label {
   font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em;
@@ -114,14 +104,12 @@ header h1 { font-size: 1.4rem; color: #1e293b; }
 <div class="scene" onclick="flipCard()">
   <div class="card-wrap" id="card-wrap">
     <div class="face front">
-      <div class="card-visual" id="front-visual"></div>
       <div class="label" id="front-label">Czech</div>
       <div class="word" id="front-word"></div>
       <div class="hint">Click to reveal</div>
       <div class="category-tag" id="cat-tag"></div>
     </div>
     <div class="face back">
-      <div class="card-visual small" id="back-visual"></div>
       <div class="label" id="back-label">English</div>
       <div class="word" id="back-word"></div>
       <div class="category-tag" id="cat-tag-back"></div>
@@ -142,123 +130,6 @@ header h1 { font-size: 1.4rem; color: #1e293b; }
 const CATEGORIES = ['all','body','health','food','countries','verbs','phrases','time','plurals','past_tense','cases','adjectives','aspect','connectors','negation'];
 const LABELS = { all:'All', body:'Body', health:'Health', food:'Food', countries:'Countries', verbs:'Verbs', phrases:'Phrases', time:'Time', plurals:'Plurals', past_tense:'Past Tense', cases:'Cases', adjectives:'Adjectives', aspect:'Aspect', connectors:'Connectors', negation:'Negation' };
 
-// Specific emoji per Czech word
-const EMOJI_MAP = {
-  // Body
-  "hlava":"🙂","krk":"🦒","rameno":"💪","pravé rameno":"💪",
-  "ruka":"✋","noha":"🦵","koleno":"🦵","levé koleno":"🦵",
-  "kotník":"🦶","pravý kotník":"🦶","záda":"🧘",
-  "břicho":"🫃","srdce":"❤️","plíce":"🫁","játra":"🫀",
-  "ledvina":"🫘","pravá ledvina":"🫘","mozek":"🧠",
-  "oko":"👁️","ucho":"👂","nos":"👃","ústa":"👄","zuby":"🦷","prst":"☝️",
-  // Health
-  "céčko":"🍊","béčko":"💊","déčko":"☀️","éčko":"💊","zinek":"💊",
-  "prášek":"💊","prášky":"💊","brát prášky":"💊",
-  "fyzioterapeut":"🏋️","nemocný":"🤒","zdravý":"💪",
-  "bolest":"😣","bolí mě...":"😣","nachlazení":"🤧","chřipka":"🤒",
-  "nemocnice":"🏥","lékárna":"⚕️","lék":"💊","recept":"📋",
-  "injekce":"💉","operace":"🏥","masáž":"💆",
-  // Countries
-  "Thajsko":"🇹🇭","thajský":"🇹🇭","Thajka":"🇹🇭",
-  "Indie":"🇮🇳","indický":"🇮🇳","Ind":"🇮🇳","Indka":"🇮🇳",
-  "Mexiko":"🇲🇽","mexický":"🇲🇽","Mexičan":"🇲🇽","Mexičanka":"🇲🇽",
-  "Asie":"🌏","asijský":"🌏",
-  "Itálie":"🇮🇹","italský":"🇮🇹","Ital":"🇮🇹","Italka":"🇮🇹",
-  "Francie":"🇫🇷","francouzský":"🇫🇷","Francouz":"🇫🇷",
-  "Čína":"🇨🇳","čínský":"🇨🇳",
-  "Japonsko":"🇯🇵","japonský":"🇯🇵",
-  "Španělsko":"🇪🇸","španělský":"🇪🇸",
-  "Anglie":"🇬🇧","anglický":"🇬🇧","Brit":"🇬🇧",
-  "Německo":"🇩🇪","německý":"🇩🇪","Němec":"🇩🇪",
-  // Food & drink
-  "polévka":"🍲","česnek":"🧄","pažitka":"🌿","kari":"🍛",
-  "rýže":"🍚","špenát":"🥬","fazole":"🫘","knedlíky":"🥟",
-  "žebra":"🍖","feferonka":"🌶️","hořčice":"🟡","křen":"🌿",
-  "houba":"🍄","salám":"🌭","sýr":"🧀","plněný":"🥙","kostka":"🧊",
-  "ostrý":"🌶️","sekaná":"🥩","bramborová kaše":"🥔","hranolky":"🍟",
-  "vepřové":"🐷","hovězí":"🐄","kuřecí":"🍗","ryba":"🐟",
-  "zelenina":"🥦","ovoce":"🍎","chleba":"🍞","máslo":"🧈",
-  "mléko":"🥛","vejce":"🥚","těstoviny":"🍝","salát":"🥗",
-  "dezert":"🍰","snídaně":"🍳","oběd":"🍽️","večeře":"🌆",
-  "voda":"💧","pivo":"🍺","víno":"🍷","káva":"☕","čaj":"🍵",
-  "smažený":"🍳","vařený":"♨️","grilovaný":"🔥","pečený":"🫓",
-  "uzený":"💨","čerstvý":"🌱","sladký":"🍭","kyselý":"🍋","slaný":"🧂",
-  "výborný":"⭐","chutný":"😋","restaurace":"🍴","jídelní lístek":"📋","poledni menu":"🍽️",
-  // Verbs
-  "dívat se":"👁️","podívat se":"🔍","brát":"✋","vařit":"🍳",
-  "milovat":"❤️","mít rád":"👍","koupit":"🛒","kupovat":"🛒",
-  "nosit":"👗","číst":"📖","chodit":"🚶","jít":"🚶","jet":"🚗",
-  "přijít":"🚪","přijet":"🚂","jíst":"🍽️","pít":"🥤",
-  "pracovat":"💼","spát":"😴","vstávat":"⏰","chtít":"💭",
-  "moci":"💪","muset":"❗","mluvit":"💬","psát":"✍️",
-  "doporučit":"👆","cítit se":"😊",
-  // Time
-  "ráno":"🌅","dopoledne":"☀️","odpoledne":"🌤️","večer":"🌆",
-  "v noci":"🌙","dnes":"📅","včera":"⏪","zítra":"⏩",
-  "vždy":"🔄","někdy":"🎲","nikdy":"❌","teď":"⏱️","brzy":"⚡","potom":"⏭️",
-  "půl deváté":"🕗","půl osmé":"🕣",
-  // Connectors
-  "ale":"↔️","protože":"🔗","proto":"➡️","tak":"👉",
-  "když":"🕐","že":"💬","nebo":"🔀","ani":"❌","a":"➕",
-  "aby":"🎯","přestože":"🤷","pokud":"❓","než":"⚖️","jak":"🔍",
-  // Negation
-  "nic":"🚫","nikde":"📍","nikam":"🚫","nikdo":"👤",
-  "vůbec ne":"🙅","nejím":"🚫","nevím":"🤷","nejdu":"🚫","nemám":"🚫","nechci":"🙅",
-  "Nikdy nic nejím.":"❌","Chtěl/a bych...":"🙏",
-  // Adjectives
-  "dobrý / dobrá / dobré":"👍","velký / velká / velké":"📏",
-  "malý / malá / malé":"🤏","nový / nová / nové":"✨",
-  "starý / stará / staré":"📜","hezký / hezká / hezké":"😊",
-  "unavený / unavená / unavené":"😴","šťastný / šťastná / šťastné":"😄",
-  "drahý / drahá / drahé":"💰","levný / levná / levné":"💲",
-  "rychlý / rychlá / rychlé":"⚡","pomalý / pomalá / pomalé":"🐢",
-  "zajímavý / zajímavá / zajímavé":"🤔","nudný / nudná / nudné":"😐",
-  "horký / horká / horké":"🔥","studený / studená / studené":"❄️",
-  // Aspect pairs
-  "koupit / kupovat":"🛒","přijít / přicházet":"🚪","odejít / odcházet":"🚶",
-  "uvařit / vařit":"🍳","napsat / psát":"✍️","přečíst / číst":"📖",
-  "udělat / dělat":"🔧","zavolat / volat":"📞","dát / dávat":"🤲",
-  "říct / říkat":"💬","vzít / brát":"✋","podívat se / dívat se":"👁️",
-  "sníst / jíst":"🍽️","vypít / pít":"🥤",
-  // Past tense
-  "byl / byla":"⏪","měl / měla":"🤲","šel / šla":"🚶","jel / jela":"🚗",
-  "jedl / jedla":"🍽️","pil / pila":"🥤","chtěl / chtěla":"💭",
-  "mohl / mohla":"💪","musel / musela":"❗","viděl / viděla":"👁️",
-  "slyšel / slyšela":"👂","četl / četla":"📖","psal / psala":"✍️",
-  "vařil / vařila":"🍳","mluvil / mluvila":"💬","pracoval / pracovala":"💼",
-  "dělal / dělala":"🔧","přišel / přišla":"🚪","přijel / přijela":"🚗",
-  "byl jsem / byla jsem":"⏪","šel jsem / šla jsem":"🚶","viděl jsem / viděla jsem":"👁️",
-  // Plurals
-  "doktoři":"👨‍⚕️","lékaři":"👨‍⚕️","bratři":"👨‍👦","sestry":"👩‍👧",
-  "auta":"🚗","obědy":"🍽️","ženy":"👩","muži":"👨","děti":"👧",
-  "přátelé":"👥","studenti":"🎓","učitelé":"👨‍🏫",
-  // Phrases
-  "Bolí mě záda.":"😣","Bolí mě hlava.":"🤕","Kde tě bolí?":"🤕",
-  "U doktora.":"🏥","K doktorovi.":"🏥","Jsi nemocný?":"🤒",
-  "Mám nachlazení.":"🤧","Mám chřipku.":"🤒","Cítím se špatně.":"😔",
-  "Mám hlad.":"🍽️","Mám žízeň.":"💧","Máš hlad?":"🍽️",
-  "Dám si...":"👉","Účet prosím.":"💳","Je to výborné.":"⭐","Je to moc ostré.":"🌶️",
-  "Co doporučujete?":"📋","Jak chutná?":"😋",
-};
-
-// Category fallback emoji (shown when no specific entry exists)
-const CAT_EMOJI = {
-  body:'🫀', health:'💊', food:'🍽️', countries:'🌍', verbs:'▶️',
-  phrases:'💬', time:'⏰', plurals:'🔢', past_tense:'⏪',
-  cases:'📐', adjectives:'🎨', aspect:'🔄', connectors:'🔗', negation:'❌'
-};
-
-function getEmoji(card) {
-  return EMOJI_MAP[card.czech] || CAT_EMOJI[card.category] || '📖';
-}
-
-// Category background colours for the visual box
-const CAT_BG = {
-  body:'#fce7f3', health:'#dbeafe', food:'#fef9c3', countries:'#dcfce7',
-  verbs:'#ede9fe', phrases:'#e0f2fe', time:'#fef3c7', plurals:'#f0fdf4',
-  past_tense:'#fce7f3', cases:'#f1f5f9', adjectives:'#fdf4ff',
-  aspect:'#ecfdf5', connectors:'#fff7ed', negation:'#fee2e2'
-};
 
 // ── Flashcard logic ──────────────────────────────────────────────
 
@@ -300,13 +171,6 @@ function showCard() {
   document.getElementById('back-label').textContent  = czechFirst ? 'English' : 'Czech';
   document.getElementById('cat-tag').textContent     = card.category.replace('_', ' ');
   document.getElementById('cat-tag-back').textContent = card.category.replace('_', ' ');
-
-  const em = getEmoji(card);
-  const bg = CAT_BG[card.category] || '#f1f5f9';
-  const fv = document.getElementById('front-visual');
-  const bv = document.getElementById('back-visual');
-  fv.textContent = em;  fv.style.background = bg;
-  bv.textContent = em;  bv.style.background = bg;
 
   const fill = deck.length > 1 ? (current / (deck.length - 1)) * 100 : 100;
   document.getElementById('progress-fill').style.width = fill + '%';
