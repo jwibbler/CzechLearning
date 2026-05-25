@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Czech Practice</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: system-ui, -apple-system, sans-serif; background: #f1f5f9; min-height: 100vh; padding: 24px 20px; }
+header { display: flex; align-items: center; gap: 16px; max-width: 640px; margin: 0 auto 24px; }
+header a { color: #3b82f6; text-decoration: none; font-size: 0.9rem; }
+header h1 { font-size: 1.4rem; color: #1e293b; }
+
+.controls { max-width: 640px; margin: 0 auto 20px; display: flex; flex-wrap: wrap; gap: 8px; }
+.mode-btn, .cat-btn {
+  padding: 6px 14px; border-radius: 20px; border: 2px solid #e2e8f0;
+  background: white; cursor: pointer; font-size: 0.82rem; color: #475569;
+  transition: all 0.15s;
+}
+.mode-btn.active { background: #f59e0b; border-color: #f59e0b; color: white; }
+.cat-btn.active  { background: #3b82f6; border-color: #3b82f6; color: white; }
+.mode-btn:hover:not(.active) { border-color: #f59e0b; color: #f59e0b; }
+.cat-btn:hover:not(.active)  { border-color: #3b82f6; color: #3b82f6; }
+.section-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: #94a3b8; align-self: center; margin-right: 2px; }
+
+.score-row { max-width: 640px; margin: 0 auto 20px; display: flex; justify-content: space-between; align-items: center; }
+.score-display { font-size: 0.9rem; color: #64748b; }
+.score-display strong { color: #1e293b; }
+.restart-btn {
+  padding: 6px 16px; border-radius: 8px; border: none;
+  background: #e2e8f0; cursor: pointer; font-size: 0.82rem; color: #475569;
+  transition: background 0.15s;
+}
+.restart-btn:hover { background: #cbd5e1; }
+
+.card {
+  max-width: 640px; margin: 0 auto;
+  background: white; border-radius: 16px; padding: 36px 32px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+.question-label { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #94a3b8; margin-bottom: 12px; }
+.question-text { font-size: 1.9rem; font-weight: 600; color: #1e293b; margin-bottom: 8px; line-height: 1.3; }
+.question-sub { font-size: 0.85rem; color: #94a3b8; margin-bottom: 32px; }
+
+.options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 500px) { .options { grid-template-columns: 1fr; } }
+.opt-btn {
+  padding: 14px 16px; border-radius: 10px; border: 2px solid #e2e8f0;
+  background: white; cursor: pointer; font-size: 0.95rem; color: #1e293b;
+  text-align: left; line-height: 1.35;
+  transition: border-color 0.15s, background 0.15s;
+}
+.opt-btn:hover:not(:disabled) { border-color: #f59e0b; background: #fffbeb; }
+.opt-btn.correct  { border-color: #22c55e; background: #f0fdf4; color: #15803d; }
+.opt-btn.wrong    { border-color: #ef4444; background: #fef2f2; color: #b91c1c; }
+.opt-btn:disabled { cursor: default; }
+
+.feedback { margin-top: 20px; font-size: 0.95rem; min-height: 24px; }
+.feedback.correct { color: #15803d; }
+.feedback.wrong   { color: #b91c1c; }
+
+.next-btn {
+  margin-top: 24px; padding: 11px 32px; border-radius: 8px; border: none;
+  background: #f59e0b; cursor: pointer; font-size: 0.95rem; color: white;
+  font-weight: 500; transition: background 0.15s; display: none;
+}
+.next-btn:hover { background: #d97706; }
+
+/* Conjugation mode */
+.conj-intro { font-size: 0.9rem; color: #64748b; margin-bottom: 20px; }
+.conj-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+.conj-table th { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: #94a3b8; text-align: left; padding: 8px 12px; border-bottom: 2px solid #e2e8f0; }
+.conj-table td { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; font-size: 0.95rem; color: #1e293b; }
+.conj-table td:first-child { font-weight: 600; color: #64748b; width: 100px; }
+.conj-verb-select { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+.verb-btn {
+  padding: 7px 18px; border-radius: 8px; border: 2px solid #e2e8f0;
+  background: white; cursor: pointer; font-size: 0.9rem; color: #475569;
+  font-weight: 500; transition: all 0.15s;
+}
+.verb-btn.active { background: #7c3aed; border-color: #7c3aed; color: white; }
+.verb-btn:hover:not(.active) { border-color: #7c3aed; color: #7c3aed; }
+.fill-input {
+  border: 2px solid #e2e8f0; border-radius: 8px; padding: 8px 12px;
+  font-size: 0.95rem; width: 180px; outline: none; transition: border-color 0.15s;
+}
+.fill-input:focus { border-color: #7c3aed; }
+.fill-input.correct { border-color: #22c55e; background: #f0fdf4; }
+.fill-input.wrong   { border-color: #ef4444; background: #fef2f2; }
+.check-btn {
+  padding: 9px 22px; border-radius: 8px; border: none;
+  background: #7c3aed; cursor: pointer; font-size: 0.9rem; color: white;
+  font-weight: 500; transition: background 0.15s; margin-top: 12px;
+}
+.check-btn:hover { background: #6d28d9; }
+.show-all-btn {
+  padding: 9px 22px; border-radius: 8px; border: 2px solid #e2e8f0;
+  background: white; cursor: pointer; font-size: 0.9rem; color: #475569;
+  transition: all 0.15s; margin-top: 12px; margin-left: 8px;
+}
+.show-all-btn:hover { border-color: #7c3aed; color: #7c3aed; }
+
+.done-msg { text-align: center; padding: 40px 20px; }
+.done-msg h2 { font-size: 1.8rem; color: #1e293b; margin-bottom: 8px; }
+.done-msg p { color: #64748b; margin-bottom: 20px; font-size: 1rem; }
+</style>
+</head>
+<body>
+<header>
+  <a href="index.html">← Back</a>
+  <h1>Quiz</h1>
+</header>
+
+<div class="controls" id="controls">
+  <span class="section-label">Mode:</span>
+  <button class="mode-btn active" data-mode="cz-en" onclick="setMode('cz-en', this)">Czech → English</button>
+  <button class="mode-btn" data-mode="en-cz" onclick="setMode('en-cz', this)">English → Czech</button>
+  <button class="mode-btn" data-mode="conj" onclick="setMode('conj', this)">Conjugations</button>
+</div>
+
+<div class="controls" id="cat-controls" style="margin-top:-8px"></div>
+
+<div class="score-row" id="score-row">
+  <div class="score-display" id="score-display">Score: <strong>0</strong> / 0</div>
+  <button class="restart-btn" onclick="restart()">Restart</button>
+</div>
+
+<div class="card" id="card-area"></div>
+
+<script src="data.js"></script>
+<script>
+const CATEGORIES = ['all', 'body', 'health', 'food', 'countries', 'verbs', 'phrases', 'time', 'plurals', 'past_tense', 'cases', 'adjectives', 'aspect', 'connectors', 'negation'];
+const LABELS = { all: 'All', body: 'Body', health: 'Health', food: 'Food', countries: 'Countries', verbs: 'Verbs', phrases: 'Phrases', time: 'Time', plurals: 'Plurals', past_tense: 'Past Tense', cases: 'Cases', adjectives: 'Adjectives', aspect: 'Aspect', connectors: 'Connectors', negation: 'Negation' };
+
+let mode = 'cz-en';
+let activeCategory = 'all';
+let pool = [];
+let weights = {};
+let currentIndex = -1;
+let score = 0;
+let sessionCount = 0;
+const SESSION_TARGET = 20;
+let answered = false;
+let activeVerbIndex = 0;
+let wrongItems = {};  // index -> {item, count}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function buildDeck() {
+  pool = VOCAB.filter(v => activeCategory === 'all' || v.category === activeCategory);
+  weights = {};
+  pool.forEach((_, i) => { weights[i] = 3; });
+  currentIndex = -1;
+  score = 0;
+  sessionCount = 0;
+  answered = false;
+  wrongItems = {};
+}
+
+function pickNext() {
+  if (pool.length === 1) return 0;
+  let total = 0;
+  pool.forEach((_, i) => { if (i !== currentIndex) total += weights[i]; });
+  let r = Math.random() * total;
+  for (let i = 0; i < pool.length; i++) {
+    if (i === currentIndex) continue;
+    r -= weights[i];
+    if (r <= 0) return i;
+  }
+  return pool.findIndex((_, i) => i !== currentIndex);
+}
+
+function getDistractors(correct, field) {
+  const candidates = VOCAB.filter(v => {
+    const val = v[field];
+    return val !== correct && (activeCategory === 'all' || v.category === activeCategory);
+  });
+  const shuffled = shuffle(candidates);
+  const chosen = [];
+  for (const v of shuffled) {
+    if (!chosen.includes(v[field])) { chosen.push(v[field]); if (chosen.length === 3) break; }
+  }
+  while (chosen.length < 3) {
+    const fallback = shuffle(VOCAB).find(v => v[field] !== correct && !chosen.includes(v[field]));
+    if (fallback) chosen.push(fallback[field]);
+    else break;
+  }
+  return chosen;
+}
+
+function renderQuestion() {
+  const card = document.getElementById('card-area');
+  if (sessionCount >= SESSION_TARGET) { renderDone(); return; }
+  currentIndex = pickNext();
+  const item = pool[currentIndex];
+  answered = false;
+
+  const questionField = mode === 'cz-en' ? 'czech' : 'english';
+  const answerField   = mode === 'cz-en' ? 'english' : 'czech';
+  const questionLang  = mode === 'cz-en' ? 'Czech' : 'English';
+  const answerLang    = mode === 'cz-en' ? 'English' : 'Czech';
+
+  const correct = item[answerField];
+  const distractors = getDistractors(correct, answerField);
+  const options = shuffle([correct, ...distractors]);
+
+  const w = weights[currentIndex];
+  const diffDot = w >= 7 ? '<span style="color:#ef4444;font-size:0.75rem;margin-left:8px">needs practice</span>'
+                : w <= 1 ? '<span style="color:#22c55e;font-size:0.75rem;margin-left:8px">looking good</span>'
+                : '';
+
+  card.innerHTML = `
+    <div class="question-label">${questionLang} ${diffDot}</div>
+    <div class="question-text">${item[questionField]}</div>
+    <div class="question-sub">What is the ${answerLang.toLowerCase()}?</div>
+    <div class="options" id="options">
+      ${options.map(opt => `<button class="opt-btn" onclick="checkAnswer(this, '${esc(opt)}', '${esc(correct)}')">${opt}</button>`).join('')}
+    </div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next question</button>
+  `;
+  updateScore();
+}
+
+function esc(s) { return s.replace(/'/g, "\\'").replace(/"/g, '&quot;'); }
+
+function checkAnswer(btn, chosen, correct) {
+  if (answered) return;
+  answered = true;
+  sessionCount++;
+  const fb = document.getElementById('feedback');
+  document.querySelectorAll('.opt-btn').forEach(b => {
+    b.disabled = true;
+    if (b.textContent.trim() === correct) b.classList.add('correct');
+  });
+  if (chosen === correct) {
+    btn.classList.add('correct');
+    fb.textContent = 'Correct!';
+    fb.className = 'feedback correct';
+    score++;
+    weights[currentIndex] = Math.max(1, weights[currentIndex] - 1);
+    updateScore();
+    setTimeout(nextQuestion, 1600);
+  } else {
+    btn.classList.add('wrong');
+    fb.textContent = `Not quite — the answer is: ${correct}`;
+    fb.className = 'feedback wrong';
+    weights[currentIndex] = weights[currentIndex] + 3;
+    if (!wrongItems[currentIndex]) wrongItems[currentIndex] = { item: pool[currentIndex], count: 0 };
+    wrongItems[currentIndex].count++;
+    document.getElementById('next-btn').style.display = 'inline-block';
+    updateScore();
+  }
+}
+
+function nextQuestion() { renderQuestion(); }
+
+function renderDone() {
+  const pct = Math.round((score / SESSION_TARGET) * 100);
+  const hardList = Object.values(wrongItems)
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 8);
+
+  const hardHTML = hardList.length === 0
+    ? '<p style="color:#15803d">No mistakes this round — great work!</p>'
+    : '<p style="color:#64748b;margin-bottom:12px">Keep practising these:</p><ul style="list-style:none;display:flex;flex-direction:column;gap:8px">' +
+      hardList.map(e => `
+        <li style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center">
+          <span><strong>${e.item.czech}</strong> — ${e.item.english}</span>
+          <span style="color:#ef4444;font-size:0.82rem">missed ${e.count}×</span>
+        </li>`).join('') + '</ul>';
+
+  document.getElementById('card-area').innerHTML = `
+    <div class="done-msg">
+      <h2>Round complete!</h2>
+      <p>You scored <strong>${score} / ${SESSION_TARGET}</strong> &nbsp;(${pct}%)</p>
+      <div style="margin:20px 0">${hardHTML}</div>
+      <button class="check-btn" onclick="restart()">Another round</button>
+    </div>
+  `;
+}
+
+function renderConjugations() {
+  const card = document.getElementById('card-area');
+  const conj = CONJUGATIONS[activeVerbIndex];
+
+  const verbBtns = CONJUGATIONS.map((c, i) =>
+    `<button class="verb-btn${i === activeVerbIndex ? ' active' : ''}" onclick="setVerb(${i})">${c.verb}</button>`
+  ).join('');
+
+  const rows = conj.forms.map((f, i) => `
+    <tr>
+      <td>${f.pronoun}</td>
+      <td><input class="fill-input" id="fill-${i}" placeholder="type form..." autocomplete="off" autocorrect="off" spellcheck="false" onkeydown="if(event.key==='Enter')checkFills()"></td>
+      <td id="hint-${i}" style="color:#94a3b8;font-size:0.85rem"></td>
+    </tr>
+  `).join('');
+
+  card.innerHTML = `
+    <div class="question-label">Conjugations</div>
+    <div class="conj-verb-select">${verbBtns}</div>
+    <div class="conj-intro">Fill in all forms of <strong>${conj.verb}</strong> (${conj.english}):</div>
+    <table class="conj-table">
+      <thead><tr><th>Pronoun</th><th>Your answer</th><th>Hint</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <button class="check-btn" onclick="checkFills()">Check</button>
+    <button class="show-all-btn" onclick="showAll()">Show answers</button>
+    <div class="feedback" id="conj-feedback"></div>
+  `;
+}
+
+function setVerb(i) { activeVerbIndex = i; renderConjugations(); }
+
+function checkFills() {
+  const conj = CONJUGATIONS[activeVerbIndex];
+  let correct = 0;
+  conj.forms.forEach((f, i) => {
+    const input = document.getElementById(`fill-${i}`);
+    const val = input.value.trim().toLowerCase();
+    const expected = f.form.toLowerCase();
+    input.classList.remove('correct', 'wrong');
+    if (val === expected) { input.classList.add('correct'); correct++; }
+    else { input.classList.add('wrong'); document.getElementById(`hint-${i}`).textContent = f.form; }
+  });
+  const fb = document.getElementById('conj-feedback');
+  if (correct === conj.forms.length) {
+    fb.textContent = 'Perfect! All forms correct.';
+    fb.className = 'feedback correct';
+  } else {
+    fb.textContent = `${correct} of ${conj.forms.length} correct. Wrong answers shown in red above.`;
+    fb.className = 'feedback wrong';
+  }
+}
+
+function showAll() {
+  const conj = CONJUGATIONS[activeVerbIndex];
+  conj.forms.forEach((f, i) => {
+    const input = document.getElementById(`fill-${i}`);
+    input.value = f.form;
+    input.classList.add('correct');
+    input.classList.remove('wrong');
+  });
+}
+
+function updateScore() {
+  const remaining = SESSION_TARGET - sessionCount;
+  document.getElementById('score-display').innerHTML =
+    `Correct: <strong>${score}</strong> &nbsp;|&nbsp; Question <strong>${Math.min(sessionCount, SESSION_TARGET)}</strong> of ${SESSION_TARGET}`;
+}
+
+function setMode(m, btn) {
+  mode = m;
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const catControls = document.getElementById('cat-controls');
+  const scoreRow = document.getElementById('score-row');
+  if (m === 'conj') {
+    catControls.style.display = 'none';
+    scoreRow.style.display = 'none';
+    renderConjugations();
+  } else {
+    catControls.style.display = 'flex';
+    scoreRow.style.display = 'flex';
+    buildDeck(); renderQuestion();
+  }
+}
+
+function restart() {
+  if (mode === 'conj') { renderConjugations(); return; }
+  buildDeck();
+  renderQuestion();
+}
+
+function buildCatControls() {
+  const div = document.getElementById('cat-controls');
+  CATEGORIES.forEach(cat => {
+    const b = document.createElement('button');
+    b.className = 'cat-btn' + (cat === 'all' ? ' active' : '');
+    b.textContent = LABELS[cat];
+    b.onclick = () => {
+      activeCategory = cat;
+      document.querySelectorAll('.cat-btn').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      buildDeck();
+      renderQuestion();
+    };
+    div.appendChild(b);
+  });
+}
+
+buildCatControls();
+buildDeck();
+renderQuestion();
+</script>
+</body>
+</html>

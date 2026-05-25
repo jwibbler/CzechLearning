@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#3b82f6">
+<link rel="manifest" href="manifest.json">
+<title>Czech Practice</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background: #f1f5f9;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 20px;
+}
+h1 { font-size: 2.4rem; color: #1e293b; margin-bottom: 8px; }
+.subtitle { color: #64748b; font-size: 1.05rem; margin-bottom: 56px; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+  max-width: 820px;
+  width: 100%;
+}
+a.card {
+  background: white;
+  border-radius: 14px;
+  padding: 36px 28px;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  border-top: 4px solid transparent;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+a.card:hover { transform: translateY(-4px); box-shadow: 0 6px 20px rgba(0,0,0,0.12); }
+a.card.blue  { border-top-color: #3b82f6; }
+a.card.green { border-top-color: #22c55e; }
+a.card.amber { border-top-color: #f59e0b; }
+.card-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.blue  .card-label { color: #3b82f6; }
+.green .card-label { color: #22c55e; }
+.amber .card-label { color: #f59e0b; }
+h2 { font-size: 1.35rem; color: #1e293b; margin-bottom: 10px; }
+p  { color: #64748b; line-height: 1.55; font-size: 0.92rem; }
+</style>
+</head>
+<body>
+<h1>Czech Practice</h1>
+<p class="subtitle">Based on your recent lessons</p>
+<div class="grid">
+  <a href="flashcards.html" class="card blue">
+    <div class="card-label">Activity 1</div>
+    <h2>Flashcards</h2>
+    <p>Flip through vocabulary cards by category. Toggle Czech-to-English or English-to-Czech. Mark cards as known to focus on what you're still learning.</p>
+  </a>
+  <a href="matching.html" class="card green">
+    <div class="card-label">Activity 2</div>
+    <h2>Matching</h2>
+    <p>Connect Czech questions to their answers, just like the exercises in your lesson sheets. Four different sets drawn from your recent lessons.</p>
+  </a>
+  <a href="quiz.html" class="card amber">
+    <div class="card-label">Activity 3</div>
+    <h2>Quiz</h2>
+    <p>Multiple choice across all categories — body parts, food, countries, phrases and more. Includes a conjugation drill for dívat se and brát.</p>
+  </a>
+</div>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js');
+}
+</script>
+</body>
+</html>
