@@ -14,7 +14,7 @@
 }
 .score-info { font-size: 0.82rem; color: var(--text-muted); }
 
-.columns { display: flex; gap: 8px; align-items: flex-start; position: relative; }
+.columns { display: flex; gap: 8px; align-items: flex-start; }
 .col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
 
 .col-label {
@@ -101,8 +101,8 @@
     <button class="btn btn-ghost" onclick="resetSet()">Reset</button>
   </div>
 
-  <div class="columns" id="columns">
-    <div class="peek-tooltip" id="match-peek"></div>
+  <div class="peek-tooltip" id="match-peek"></div>
+  <div class="columns">
     <div class="col" id="q-col"><div class="col-label">Questions</div></div>
     <div class="col" id="a-col"><div class="col-label">Answers</div></div>
   </div>
