@@ -226,9 +226,11 @@ function resetFlip() {
 function markCard(isKnown) {
   const card = deck[current];
   if (isKnown) known.add(card.czech); else known.delete(card.czech);
-  if (current < deck.length - 1) current++;
-  resetFlip();
-  showCard();
+  setTimeout(() => {
+    if (current < deck.length - 1) current++;
+    resetFlip();
+    showCard();
+  }, 400);
 }
 
 function setCategory(cat) {
