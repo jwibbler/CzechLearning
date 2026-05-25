@@ -1,137 +1,151 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
 <title>Flashcards — Czech Practice</title>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: system-ui, -apple-system, sans-serif; background: #f1f5f9; min-height: 100vh; padding: 24px 20px; }
-header { display: flex; align-items: center; gap: 16px; max-width: 680px; margin: 0 auto 28px; }
-header a { color: #3b82f6; text-decoration: none; font-size: 0.9rem; }
-header h1 { font-size: 1.4rem; color: #1e293b; }
-
-.controls { max-width: 680px; margin: 0 auto 20px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-.filter-btn {
-  padding: 6px 14px; border-radius: 20px; border: 2px solid #e2e8f0;
-  background: white; cursor: pointer; font-size: 0.85rem; color: #475569; transition: all 0.15s;
-}
-.filter-btn.active { background: #3b82f6; border-color: #3b82f6; color: white; }
-.filter-btn:hover:not(.active) { border-color: #3b82f6; color: #3b82f6; }
-.action-btn {
-  padding: 6px 14px; border-radius: 8px; border: none;
-  background: #e2e8f0; cursor: pointer; font-size: 0.85rem; color: #475569;
-  transition: background 0.15s; margin-left: auto;
-}
-.action-btn:hover { background: #cbd5e1; }
-.direction-toggle {
-  padding: 6px 14px; border-radius: 8px; border: 2px solid #e2e8f0;
-  background: white; cursor: pointer; font-size: 0.85rem; color: #475569; transition: all 0.15s;
-}
-.direction-toggle.active { background: #7c3aed; border-color: #7c3aed; color: white; }
-
-.progress-bar-wrap { max-width: 680px; margin: 0 auto 24px; }
-.progress-info { display: flex; justify-content: space-between; font-size: 0.8rem; color: #64748b; margin-bottom: 6px; }
-.progress-bar { height: 6px; background: #e2e8f0; border-radius: 3px; }
-.progress-fill { height: 100%; background: #3b82f6; border-radius: 3px; transition: width 0.3s; }
-
-.scene { max-width: 680px; margin: 0 auto; perspective: 1200px; cursor: pointer; user-select: none; }
 .card-wrap {
-  position: relative; width: 100%; height: 400px;
-  transform-style: preserve-3d; transition: transform 0.45s ease;
+  position: relative;
+  width: 100%;
+  perspective: 1200px;
+  cursor: pointer;
+  user-select: none;
+  margin-bottom: 12px;
 }
-.card-wrap.flipped { transform: rotateY(180deg); }
+.card-inner {
+  position: relative;
+  width: 100%;
+  min-height: 190px;
+  transform-style: preserve-3d;
+  transition: transform 0.45s ease;
+}
+.card-inner.flipped { transform: rotateY(180deg); }
+
 .face {
-  position: absolute; inset: 0; background: white; border-radius: 16px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  padding: 20px 32px; backface-visibility: hidden; gap: 0;
+  position: absolute;
+  inset: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 28px 24px;
+  backface-visibility: hidden;
+  gap: 8px;
+  text-align: center;
+  min-height: 190px;
 }
-.face.back { transform: rotateY(180deg); background: #f8faff; }
+.face.back {
+  transform: rotateY(180deg);
+  background: var(--surface2);
+}
+.face .cat-tag { position: absolute; top: 12px; right: 12px; }
+.face .label-sm { margin-bottom: 2px; }
+.face .word {
+  font-size: 1.65rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  line-height: 1.25;
+}
+.face .hint { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
 
+.card-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.known-count {
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  min-height: 20px;
+}
 
-.face .label {
-  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em;
-  text-transform: uppercase; color: #94a3b8; margin-bottom: 6px;
+/* direction toggle in chip-row */
+.dir-chip {
+  margin-left: auto;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  font-size: 0.76rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
 }
-.face .word { font-size: 1.55rem; font-weight: 600; color: #1e293b; text-align: center; line-height: 1.3; }
-.face .hint { font-size: 0.82rem; color: #94a3b8; margin-top: 10px; }
-.face .category-tag {
-  position: absolute; top: 14px; right: 14px;
-  font-size: 0.7rem; font-weight: 600; padding: 3px 10px;
-  border-radius: 12px; background: #e0e7ff; color: #4338ca; text-transform: capitalize;
-}
-
-.nav { max-width: 680px; margin: 20px auto 0; display: flex; align-items: center; gap: 12px; justify-content: center; }
-.nav-btn {
-  padding: 10px 28px; border-radius: 8px; border: 2px solid #e2e8f0;
-  background: white; cursor: pointer; font-size: 0.95rem; color: #1e293b;
-  font-weight: 500; transition: all 0.15s;
-}
-.nav-btn:hover { border-color: #3b82f6; color: #3b82f6; }
-.nav-btn:disabled { opacity: 0.35; cursor: default; }
-.got-it-btn {
-  padding: 10px 28px; border-radius: 8px; border: none;
-  background: #22c55e; cursor: pointer; font-size: 0.95rem; color: white;
-  font-weight: 500; transition: background 0.15s;
-}
-.got-it-btn:hover { background: #16a34a; }
-.still-btn {
-  padding: 10px 28px; border-radius: 8px; border: none;
-  background: #f97316; cursor: pointer; font-size: 0.95rem; color: white;
-  font-weight: 500; transition: background 0.15s;
-}
-.still-btn:hover { background: #ea580c; }
-.known-count { max-width: 680px; margin: 16px auto 0; text-align: center; font-size: 0.85rem; color: #64748b; }
+.dir-chip.active { background: #7c3aed; border-color: #7c3aed; color: white; }
+.dir-chip:hover:not(.active) { border-color: #7c3aed; color: #7c3aed; }
 </style>
 </head>
 <body>
-<header>
-  <a href="index.html">← Back</a>
-  <h1>Flashcards</h1>
-</header>
+<nav>
+  <a href="index.html" class="logo">🇨🇿 Czech Practice</a>
+  <a href="flashcards.html" class="nav-link active">Flashcards</a>
+  <a href="matching.html" class="nav-link">Matching</a>
+  <a href="quiz.html" class="nav-link">Quiz</a>
+  <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">☀️</button>
+</nav>
 
-<div class="controls" id="controls"></div>
+<div class="page">
+  <div class="chip-row" id="chip-row"></div>
 
-<div class="progress-bar-wrap">
-  <div class="progress-info">
+  <div class="progress-row">
     <span id="progress-text">Card 1 of 0</span>
     <span id="known-text">Known: 0</span>
   </div>
-  <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
-</div>
+  <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
 
-<div class="scene" onclick="flipCard()">
-  <div class="card-wrap" id="card-wrap">
-    <div class="face front">
-      <div class="label" id="front-label">Czech</div>
-      <div class="word" id="front-word"></div>
-      <div class="hint">Click to reveal</div>
-      <div class="category-tag" id="cat-tag"></div>
-    </div>
-    <div class="face back">
-      <div class="label" id="back-label">English</div>
-      <div class="word" id="back-word"></div>
-      <div class="category-tag" id="cat-tag-back"></div>
+  <div class="card-wrap" onclick="flipCard()">
+    <div class="card-inner" id="card-inner">
+      <div class="face front">
+        <span class="cat-tag" id="cat-tag"></span>
+        <div class="label-sm" id="front-label">Czech</div>
+        <div class="word" id="front-word"></div>
+        <div class="hint">Tap to reveal</div>
+      </div>
+      <div class="face back">
+        <span class="cat-tag" id="cat-tag-back"></span>
+        <div class="label-sm" id="back-label">English</div>
+        <div class="word" id="back-word"></div>
+      </div>
     </div>
   </div>
-</div>
 
-<div class="nav">
-  <button class="nav-btn" onclick="prevCard()">Prev</button>
-  <button class="still-btn" onclick="markCard(false)">Still learning</button>
-  <button class="got-it-btn" onclick="markCard(true)">Got it</button>
-  <button class="nav-btn" onclick="nextCard()">Next</button>
+  <div class="card-actions">
+    <button class="btn" onclick="prevCard()">← Prev</button>
+    <button class="btn btn-warning" onclick="markCard(false)">Still learning</button>
+    <button class="btn btn-success" onclick="markCard(true)">Got it ✓</button>
+    <button class="btn" onclick="nextCard()">Next →</button>
+  </div>
+  <div class="known-count" id="known-count"></div>
 </div>
-<div class="known-count" id="known-count"></div>
 
 <script src="data.js"></script>
 <script>
+(function() {
+  const saved = localStorage.getItem('theme') || 'dark';
+  document.documentElement.dataset.theme = saved;
+  document.getElementById('theme-btn').textContent = saved === 'dark' ? '☀️' : '🌙';
+})();
+function toggleTheme() {
+  const html = document.documentElement;
+  const next = html.dataset.theme === 'dark' ? 'light' : 'dark';
+  html.dataset.theme = next;
+  localStorage.setItem('theme', next);
+  document.getElementById('theme-btn').textContent = next === 'dark' ? '☀️' : '🌙';
+}
+
 const CATEGORIES = ['all','body','health','food','countries','verbs','phrases','time','plurals','past_tense','cases','adjectives','aspect','connectors','negation'];
 const LABELS = { all:'All', body:'Body', health:'Health', food:'Food', countries:'Countries', verbs:'Verbs', phrases:'Phrases', time:'Time', plurals:'Plurals', past_tense:'Past Tense', cases:'Cases', adjectives:'Adjectives', aspect:'Aspect', connectors:'Connectors', negation:'Negation' };
-
-
-// ── Flashcard logic ──────────────────────────────────────────────
 
 let activeCategory = 'all';
 let czechFirst = true;
@@ -154,14 +168,13 @@ function shuffle() {
   }
   current = 0;
   flipped = false;
-  document.getElementById('card-wrap').classList.remove('flipped');
+  document.getElementById('card-inner').classList.remove('flipped');
   showCard();
 }
 
 function showCard() {
   if (deck.length === 0) return;
   const card = deck[current];
-
   const frontWord = czechFirst ? card.czech : card.english;
   const backWord  = czechFirst ? card.english : card.czech;
 
@@ -177,12 +190,12 @@ function showCard() {
   document.getElementById('progress-text').textContent = `Card ${current + 1} of ${deck.length}`;
   document.getElementById('known-text').textContent = `Known: ${known.size}`;
   document.getElementById('known-count').textContent =
-    known.size > 0 ? `${known.size} of ${VOCAB.length} total cards marked as known` : '';
+    known.size > 0 ? `${known.size} of ${VOCAB.length} total marked as known` : '';
 }
 
 function flipCard() {
   flipped = !flipped;
-  document.getElementById('card-wrap').classList.toggle('flipped', flipped);
+  document.getElementById('card-inner').classList.toggle('flipped', flipped);
 }
 
 function nextCard() {
@@ -195,13 +208,12 @@ function prevCard() {
 
 function resetFlip() {
   flipped = false;
-  document.getElementById('card-wrap').classList.remove('flipped');
+  document.getElementById('card-inner').classList.remove('flipped');
 }
 
 function markCard(isKnown) {
   const card = deck[current];
-  if (isKnown) known.add(card.czech);
-  else known.delete(card.czech);
+  if (isKnown) known.add(card.czech); else known.delete(card.czech);
   if (current < deck.length - 1) current++;
   resetFlip();
   showCard();
@@ -209,29 +221,30 @@ function markCard(isKnown) {
 
 function setCategory(cat) {
   activeCategory = cat;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === cat));
+  document.querySelectorAll('.chip[data-cat]').forEach(b => b.classList.toggle('active', b.dataset.cat === cat));
   buildDeck();
 }
 
 function buildControls() {
-  const div = document.getElementById('controls');
+  const row = document.getElementById('chip-row');
   CATEGORIES.forEach(cat => {
     const b = document.createElement('button');
-    b.className = 'filter-btn' + (cat === 'all' ? ' active' : '');
+    b.className = 'chip' + (cat === 'all' ? ' active' : '');
     b.dataset.cat = cat;
     b.textContent = LABELS[cat];
     b.onclick = () => setCategory(cat);
-    div.appendChild(b);
+    row.appendChild(b);
   });
 
   const shuffleBtn = document.createElement('button');
-  shuffleBtn.className = 'action-btn';
+  shuffleBtn.className = 'btn btn-ghost';
+  shuffleBtn.style.cssText = 'font-size:0.76rem;padding:4px 12px;border-radius:20px;';
   shuffleBtn.textContent = 'Shuffle';
   shuffleBtn.onclick = shuffle;
-  div.appendChild(shuffleBtn);
+  row.appendChild(shuffleBtn);
 
   const dirBtn = document.createElement('button');
-  dirBtn.className = 'direction-toggle';
+  dirBtn.className = 'dir-chip';
   dirBtn.textContent = 'Czech → English';
   dirBtn.onclick = () => {
     czechFirst = !czechFirst;
@@ -240,7 +253,7 @@ function buildControls() {
     resetFlip();
     showCard();
   };
-  div.appendChild(dirBtn);
+  row.appendChild(dirBtn);
 }
 
 buildControls();

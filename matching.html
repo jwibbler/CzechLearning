@@ -1,105 +1,114 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
 <title>Matching — Czech Practice</title>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: system-ui, -apple-system, sans-serif; background: #f1f5f9; min-height: 100vh; padding: 24px 20px; }
-header { display: flex; align-items: center; gap: 16px; max-width: 900px; margin: 0 auto 24px; }
-header a { color: #3b82f6; text-decoration: none; font-size: 0.9rem; }
-header h1 { font-size: 1.4rem; color: #1e293b; }
-
-.set-tabs { max-width: 900px; margin: 0 auto 24px; display: flex; flex-wrap: wrap; gap: 8px; }
-.tab-btn {
-  padding: 7px 16px; border-radius: 8px; border: 2px solid #e2e8f0;
-  background: white; cursor: pointer; font-size: 0.85rem; color: #475569;
-  transition: all 0.15s;
+.score-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
 }
-.tab-btn.active { background: #22c55e; border-color: #22c55e; color: white; }
-.tab-btn:hover:not(.active) { border-color: #22c55e; color: #22c55e; }
+.score-info { font-size: 0.82rem; color: var(--text-muted); }
 
-.score-bar { max-width: 900px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: space-between; }
-.score-info { font-size: 0.9rem; color: #64748b; }
-.reset-btn {
-  padding: 7px 18px; border-radius: 8px; border: none;
-  background: #e2e8f0; cursor: pointer; font-size: 0.85rem; color: #475569;
-  transition: background 0.15s;
+.columns { display: flex; gap: 12px; align-items: flex-start; }
+.col { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+@media (max-width: 560px) { .columns { flex-direction: column; } }
+
+.col-label {
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding-bottom: 6px;
 }
-.reset-btn:hover { background: #cbd5e1; }
-
-.columns { max-width: 900px; margin: 0 auto; display: flex; gap: 16px; align-items: flex-start; }
-.col { flex: 1; display: flex; flex-direction: column; gap: 10px; }
-@media (max-width: 600px) { .columns { flex-direction: column; } }
-
-.col-label { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #94a3b8; padding: 0 4px 8px; }
 .item {
-  background: white;
-  border-radius: 10px;
-  padding: 14px 18px;
+  background: var(--surface);
+  border-radius: 9px;
+  padding: 12px 14px;
   cursor: pointer;
-  border: 2px solid #e2e8f0;
-  font-size: 0.9rem;
-  color: #1e293b;
+  border: 1.5px solid var(--border);
+  font-size: 0.85rem;
+  color: var(--text);
   line-height: 1.4;
   transition: border-color 0.15s, background 0.15s;
-  min-height: 56px;
+  min-height: 48px;
   display: flex;
   align-items: center;
 }
-.item:hover:not(.matched):not(.wrong) { border-color: #22c55e; }
-.item.selected { border-color: #3b82f6; background: #eff6ff; }
-.item.matched { border-color: #22c55e; background: #f0fdf4; color: #15803d; cursor: default; }
-.item.wrong { border-color: #ef4444; background: #fef2f2; animation: shake 0.35s ease; }
+.item:hover:not(.matched):not(.wrong) { border-color: var(--success); }
+.item.selected { border-color: var(--accent); background: var(--accent-light); }
+.item.matched { border-color: var(--success); background: var(--success-bg); color: var(--success); cursor: default; }
+.item.wrong { border-color: var(--danger); background: var(--danger-bg); animation: shake 0.35s ease; }
 
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
-  20% { transform: translateX(-6px); }
-  60% { transform: translateX(6px); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
 }
 
 .result-banner {
-  max-width: 900px; margin: 24px auto 0;
-  background: white; border-radius: 12px; padding: 24px 28px;
-  text-align: center; display: none;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  text-align: center;
+  display: none;
+  margin-top: 20px;
+  box-shadow: var(--shadow);
 }
-.result-banner h2 { color: #15803d; font-size: 1.5rem; margin-bottom: 8px; }
-.result-banner p { color: #64748b; margin-bottom: 16px; }
-.next-btn {
-  padding: 10px 28px; border-radius: 8px; border: none;
-  background: #22c55e; cursor: pointer; font-size: 0.95rem; color: white;
-  font-weight: 500; transition: background 0.15s;
-}
-.next-btn:hover { background: #16a34a; }
+.result-banner h2 { color: var(--success); font-size: 1.3rem; margin-bottom: 6px; }
+.result-banner p { color: var(--text-muted); margin-bottom: 16px; font-size: 0.88rem; }
 </style>
 </head>
 <body>
-<header>
-  <a href="index.html">← Back</a>
-  <h1>Matching</h1>
-</header>
+<nav>
+  <a href="index.html" class="logo">🇨🇿 Czech Practice</a>
+  <a href="flashcards.html" class="nav-link">Flashcards</a>
+  <a href="matching.html" class="nav-link active">Matching</a>
+  <a href="quiz.html" class="nav-link">Quiz</a>
+  <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">☀️</button>
+</nav>
 
-<div class="set-tabs" id="set-tabs"></div>
+<div class="page">
+  <div class="chip-row" id="set-tabs"></div>
 
-<div class="score-bar">
-  <div class="score-info" id="score-info">Match each question to its answer</div>
-  <button class="reset-btn" onclick="resetSet()">Reset</button>
-</div>
+  <div class="score-bar">
+    <div class="score-info" id="score-info">Match each question to its answer</div>
+    <button class="btn btn-ghost" onclick="resetSet()">Reset</button>
+  </div>
 
-<div class="columns">
-  <div class="col" id="q-col"><div class="col-label">Questions</div></div>
-  <div class="col" id="a-col"><div class="col-label">Answers</div></div>
-</div>
-<div class="result-banner" id="result-banner">
-  <h2>Well done!</h2>
-  <p id="result-msg"></p>
-  <button class="next-btn" id="next-set-btn" onclick="goNextSet()">Next set</button>
+  <div class="columns">
+    <div class="col" id="q-col"><div class="col-label">Questions</div></div>
+    <div class="col" id="a-col"><div class="col-label">Answers</div></div>
+  </div>
+
+  <div class="result-banner" id="result-banner">
+    <h2>Well done! 🎉</h2>
+    <p id="result-msg"></p>
+    <button class="btn btn-success" id="next-set-btn" onclick="goNextSet()">Next set →</button>
+  </div>
 </div>
 
 <script src="data.js"></script>
 <script>
+(function() {
+  const saved = localStorage.getItem('theme') || 'dark';
+  document.documentElement.dataset.theme = saved;
+  document.getElementById('theme-btn').textContent = saved === 'dark' ? '☀️' : '🌙';
+})();
+function toggleTheme() {
+  const html = document.documentElement;
+  const next = html.dataset.theme === 'dark' ? 'light' : 'dark';
+  html.dataset.theme = next;
+  localStorage.setItem('theme', next);
+  document.getElementById('theme-btn').textContent = next === 'dark' ? '☀️' : '🌙';
+}
+
 let activeSet = 0;
 let selectedQ = null;
 let matched = 0;
@@ -120,7 +129,7 @@ function buildTabs() {
   div.innerHTML = '';
   MATCHING_SETS.forEach((s, i) => {
     const b = document.createElement('button');
-    b.className = 'tab-btn' + (i === activeSet ? ' active' : '');
+    b.className = 'chip' + (i === activeSet ? ' active-green' : '');
     b.textContent = s.title;
     b.onclick = () => { activeSet = i; buildTabs(); loadSet(); };
     div.appendChild(b);
@@ -129,9 +138,7 @@ function buildTabs() {
 
 function loadSet() {
   const set = MATCHING_SETS[activeSet];
-  matched = 0;
-  wrong = 0;
-  selectedQ = null;
+  matched = 0; wrong = 0; selectedQ = null;
   answers = shuffle(set.pairs.map((p, i) => ({ text: p.a, index: i, matched: false })));
   renderGrid();
   document.getElementById('result-banner').style.display = 'none';
@@ -146,21 +153,21 @@ function renderGrid() {
   acol.innerHTML = '<div class="col-label">Answers</div>';
 
   set.pairs.forEach((pair, i) => {
-    const qel = document.createElement('div');
-    qel.className = 'item';
-    qel.dataset.qindex = i;
-    qel.textContent = pair.q;
-    qel.onclick = () => selectQuestion(i);
-    qcol.appendChild(qel);
+    const el = document.createElement('div');
+    el.className = 'item';
+    el.dataset.qindex = i;
+    el.textContent = pair.q;
+    el.onclick = () => selectQuestion(i);
+    qcol.appendChild(el);
   });
 
   answers.forEach((ans, i) => {
-    const ael = document.createElement('div');
-    ael.className = 'item';
-    ael.dataset.aindex = i;
-    ael.textContent = ans.text;
-    ael.onclick = () => selectAnswer(i);
-    acol.appendChild(ael);
+    const el = document.createElement('div');
+    el.className = 'item';
+    el.dataset.aindex = i;
+    el.textContent = ans.text;
+    el.onclick = () => selectAnswer(i);
+    acol.appendChild(el);
   });
 }
 
@@ -203,7 +210,7 @@ function selectAnswer(aPos) {
 function updateScore() {
   const total = MATCHING_SETS[activeSet].pairs.length;
   document.getElementById('score-info').textContent =
-    `Matched: ${matched} / ${total}  |  Wrong attempts: ${wrong}`;
+    `Matched: ${matched} / ${total}  ·  Wrong: ${wrong}`;
 }
 
 function showResult() {
@@ -212,7 +219,7 @@ function showResult() {
   const total = MATCHING_SETS[activeSet].pairs.length;
   document.getElementById('result-msg').textContent =
     wrong === 0
-      ? `Perfect — all ${total} pairs matched with no mistakes!`
+      ? `Perfect — all ${total} pairs with no mistakes!`
       : `All ${total} pairs matched (${wrong} wrong attempt${wrong !== 1 ? 's' : ''}).`;
   const nextBtn = document.getElementById('next-set-btn');
   nextBtn.style.display = activeSet < MATCHING_SETS.length - 1 ? 'inline-block' : 'none';

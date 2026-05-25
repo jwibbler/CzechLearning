@@ -1,136 +1,198 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
 <title>Quiz — Czech Practice</title>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: system-ui, -apple-system, sans-serif; background: #f1f5f9; min-height: 100vh; padding: 24px 20px; }
-header { display: flex; align-items: center; gap: 16px; max-width: 640px; margin: 0 auto 24px; }
-header a { color: #3b82f6; text-decoration: none; font-size: 0.9rem; }
-header h1 { font-size: 1.4rem; color: #1e293b; }
-
-.controls { max-width: 640px; margin: 0 auto 20px; display: flex; flex-wrap: wrap; gap: 8px; }
-.mode-btn, .cat-btn {
-  padding: 6px 14px; border-radius: 20px; border: 2px solid #e2e8f0;
-  background: white; cursor: pointer; font-size: 0.82rem; color: #475569;
+.controls-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+  align-items: center;
+}
+.section-label {
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-right: 2px;
+  align-self: center;
+}
+.mode-chip {
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  font-size: 0.76rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
   transition: all 0.15s;
 }
-.mode-btn.active { background: #f59e0b; border-color: #f59e0b; color: white; }
-.cat-btn.active  { background: #3b82f6; border-color: #3b82f6; color: white; }
-.mode-btn:hover:not(.active) { border-color: #f59e0b; color: #f59e0b; }
-.cat-btn:hover:not(.active)  { border-color: #3b82f6; color: #3b82f6; }
-.section-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: #94a3b8; align-self: center; margin-right: 2px; }
+.mode-chip.active { background: var(--warning); border-color: var(--warning); color: white; }
+.mode-chip:hover:not(.active) { border-color: var(--warning); color: var(--warning); }
 
-.score-row { max-width: 640px; margin: 0 auto 20px; display: flex; justify-content: space-between; align-items: center; }
-.score-display { font-size: 0.9rem; color: #64748b; }
-.score-display strong { color: #1e293b; }
-.restart-btn {
-  padding: 6px 16px; border-radius: 8px; border: none;
-  background: #e2e8f0; cursor: pointer; font-size: 0.82rem; color: #475569;
-  transition: background 0.15s;
+.score-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
 }
-.restart-btn:hover { background: #cbd5e1; }
+.score-display { font-size: 0.82rem; color: var(--text-muted); }
+.score-display strong { color: var(--text); }
 
-.card {
-  max-width: 640px; margin: 0 auto;
-  background: white; border-radius: 16px; padding: 36px 32px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+/* Quiz card */
+.quiz-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--shadow);
 }
-.question-label { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #94a3b8; margin-bottom: 12px; }
-.question-text { font-size: 1.9rem; font-weight: 600; color: #1e293b; margin-bottom: 8px; line-height: 1.3; }
-.question-sub { font-size: 0.85rem; color: #94a3b8; margin-bottom: 32px; }
+.question-label {
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+.question-text {
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+.question-sub { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 20px; }
 
-.options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-@media (max-width: 500px) { .options { grid-template-columns: 1fr; } }
+.options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+@media (max-width: 480px) { .options { grid-template-columns: 1fr; } }
+
 .opt-btn {
-  padding: 14px 16px; border-radius: 10px; border: 2px solid #e2e8f0;
-  background: white; cursor: pointer; font-size: 0.95rem; color: #1e293b;
-  text-align: left; line-height: 1.35;
+  padding: 12px 14px;
+  border-radius: 9px;
+  border: 1.5px solid var(--border);
+  background: var(--surface2);
+  cursor: pointer;
+  font-size: 0.88rem;
+  color: var(--text);
+  text-align: left;
+  line-height: 1.35;
   transition: border-color 0.15s, background 0.15s;
 }
-.opt-btn:hover:not(:disabled) { border-color: #f59e0b; background: #fffbeb; }
-.opt-btn.correct  { border-color: #22c55e; background: #f0fdf4; color: #15803d; }
-.opt-btn.wrong    { border-color: #ef4444; background: #fef2f2; color: #b91c1c; }
+.opt-btn:hover:not(:disabled) { border-color: var(--warning); background: var(--accent-light); }
+.opt-btn.correct { border-color: var(--success); background: var(--success-bg); color: var(--success); }
+.opt-btn.wrong   { border-color: var(--danger);  background: var(--danger-bg);  color: var(--danger); }
 .opt-btn:disabled { cursor: default; }
 
-.feedback { margin-top: 20px; font-size: 0.95rem; min-height: 24px; }
-.feedback.correct { color: #15803d; }
-.feedback.wrong   { color: #b91c1c; }
+.feedback { margin-top: 14px; font-size: 0.88rem; min-height: 20px; }
+.feedback.correct { color: var(--success); }
+.feedback.wrong   { color: var(--danger); }
 
 .next-btn {
-  margin-top: 24px; padding: 11px 32px; border-radius: 8px; border: none;
-  background: #f59e0b; cursor: pointer; font-size: 0.95rem; color: white;
-  font-weight: 500; transition: background 0.15s; display: none;
+  margin-top: 16px;
+  display: none;
 }
-.next-btn:hover { background: #d97706; }
+
+/* Done screen */
+.done-msg { text-align: center; padding: 32px 16px; }
+.done-msg h2 { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 6px; }
+.done-msg p { color: var(--text-muted); margin-bottom: 20px; font-size: 0.9rem; }
+.wrong-list { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; text-align: left; }
+.wrong-item {
+  background: var(--danger-bg);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 10px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+}
+.wrong-item .missed { color: var(--danger); font-size: 0.78rem; }
 
 /* Conjugation mode */
-.conj-intro { font-size: 0.9rem; color: #64748b; margin-bottom: 20px; }
-.conj-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
-.conj-table th { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: #94a3b8; text-align: left; padding: 8px 12px; border-bottom: 2px solid #e2e8f0; }
-.conj-table td { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; font-size: 0.95rem; color: #1e293b; }
-.conj-table td:first-child { font-weight: 600; color: #64748b; width: 100px; }
-.conj-verb-select { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
-.verb-btn {
-  padding: 7px 18px; border-radius: 8px; border: 2px solid #e2e8f0;
-  background: white; cursor: pointer; font-size: 0.9rem; color: #475569;
-  font-weight: 500; transition: all 0.15s;
+.conj-intro { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px; }
+.conj-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+.conj-table th {
+  font-size: 0.67rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--text-muted); text-align: left; padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
 }
-.verb-btn.active { background: #7c3aed; border-color: #7c3aed; color: white; }
-.verb-btn:hover:not(.active) { border-color: #7c3aed; color: #7c3aed; }
+.conj-table td { padding: 9px 12px; border-bottom: 1px solid var(--border); font-size: 0.88rem; color: var(--text); }
+.conj-table td:first-child { font-weight: 600; color: var(--text-muted); width: 90px; }
 .fill-input {
-  border: 2px solid #e2e8f0; border-radius: 8px; padding: 8px 12px;
-  font-size: 0.95rem; width: 180px; outline: none; transition: border-color 0.15s;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 11px;
+  font-size: 0.88rem;
+  width: 100%;
+  max-width: 200px;
+  outline: none;
+  background: var(--bg);
+  color: var(--text);
+  transition: border-color 0.15s;
 }
-.fill-input:focus { border-color: #7c3aed; }
-.fill-input.correct { border-color: #22c55e; background: #f0fdf4; }
-.fill-input.wrong   { border-color: #ef4444; background: #fef2f2; }
-.check-btn {
-  padding: 9px 22px; border-radius: 8px; border: none;
-  background: #7c3aed; cursor: pointer; font-size: 0.9rem; color: white;
-  font-weight: 500; transition: background 0.15s; margin-top: 12px;
-}
-.check-btn:hover { background: #6d28d9; }
-.show-all-btn {
-  padding: 9px 22px; border-radius: 8px; border: 2px solid #e2e8f0;
-  background: white; cursor: pointer; font-size: 0.9rem; color: #475569;
-  transition: all 0.15s; margin-top: 12px; margin-left: 8px;
-}
-.show-all-btn:hover { border-color: #7c3aed; color: #7c3aed; }
-
-.done-msg { text-align: center; padding: 40px 20px; }
-.done-msg h2 { font-size: 1.8rem; color: #1e293b; margin-bottom: 8px; }
-.done-msg p { color: #64748b; margin-bottom: 20px; font-size: 1rem; }
+.fill-input:focus { border-color: var(--accent); }
+.fill-input.correct { border-color: var(--success); background: var(--success-bg); }
+.fill-input.wrong   { border-color: var(--danger);  background: var(--danger-bg); }
+.conj-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 </style>
 </head>
 <body>
-<header>
-  <a href="index.html">← Back</a>
-  <h1>Quiz</h1>
-</header>
+<nav>
+  <a href="index.html" class="logo">🇨🇿 Czech Practice</a>
+  <a href="flashcards.html" class="nav-link">Flashcards</a>
+  <a href="matching.html" class="nav-link">Matching</a>
+  <a href="quiz.html" class="nav-link active">Quiz</a>
+  <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">☀️</button>
+</nav>
 
-<div class="controls" id="controls">
-  <span class="section-label">Mode:</span>
-  <button class="mode-btn active" data-mode="cz-en" onclick="setMode('cz-en', this)">Czech → English</button>
-  <button class="mode-btn" data-mode="en-cz" onclick="setMode('en-cz', this)">English → Czech</button>
-  <button class="mode-btn" data-mode="conj" onclick="setMode('conj', this)">Conjugations</button>
+<div class="page">
+  <div class="controls-row" id="controls">
+    <span class="section-label">Mode</span>
+    <button class="mode-chip active" data-mode="cz-en" onclick="setMode('cz-en', this)">Czech → English</button>
+    <button class="mode-chip" data-mode="en-cz" onclick="setMode('en-cz', this)">English → Czech</button>
+    <button class="mode-chip" data-mode="conj" onclick="setMode('conj', this)">Conjugations</button>
+  </div>
+
+  <div class="chip-row" id="cat-controls"></div>
+
+  <div class="score-row" id="score-row">
+    <div class="score-display" id="score-display">Score: <strong>0</strong> / 0</div>
+    <button class="btn btn-ghost" onclick="restart()">Restart</button>
+  </div>
+
+  <div class="quiz-card" id="card-area"></div>
 </div>
-
-<div class="controls" id="cat-controls" style="margin-top:-8px"></div>
-
-<div class="score-row" id="score-row">
-  <div class="score-display" id="score-display">Score: <strong>0</strong> / 0</div>
-  <button class="restart-btn" onclick="restart()">Restart</button>
-</div>
-
-<div class="card" id="card-area"></div>
 
 <script src="data.js"></script>
 <script>
-const CATEGORIES = ['all', 'body', 'health', 'food', 'countries', 'verbs', 'phrases', 'time', 'plurals', 'past_tense', 'cases', 'adjectives', 'aspect', 'connectors', 'negation'];
-const LABELS = { all: 'All', body: 'Body', health: 'Health', food: 'Food', countries: 'Countries', verbs: 'Verbs', phrases: 'Phrases', time: 'Time', plurals: 'Plurals', past_tense: 'Past Tense', cases: 'Cases', adjectives: 'Adjectives', aspect: 'Aspect', connectors: 'Connectors', negation: 'Negation' };
+(function() {
+  const saved = localStorage.getItem('theme') || 'dark';
+  document.documentElement.dataset.theme = saved;
+  document.getElementById('theme-btn').textContent = saved === 'dark' ? '☀️' : '🌙';
+})();
+function toggleTheme() {
+  const html = document.documentElement;
+  const next = html.dataset.theme === 'dark' ? 'light' : 'dark';
+  html.dataset.theme = next;
+  localStorage.setItem('theme', next);
+  document.getElementById('theme-btn').textContent = next === 'dark' ? '☀️' : '🌙';
+}
+
+const CATEGORIES = ['all','body','health','food','countries','verbs','phrases','time','plurals','past_tense','cases','adjectives','aspect','connectors','negation'];
+const LABELS = { all:'All', body:'Body', health:'Health', food:'Food', countries:'Countries', verbs:'Verbs', phrases:'Phrases', time:'Time', plurals:'Plurals', past_tense:'Past Tense', cases:'Cases', adjectives:'Adjectives', aspect:'Aspect', connectors:'Connectors', negation:'Negation' };
 
 let mode = 'cz-en';
 let activeCategory = 'all';
@@ -142,7 +204,7 @@ let sessionCount = 0;
 const SESSION_TARGET = 20;
 let answered = false;
 let activeVerbIndex = 0;
-let wrongItems = {};  // index -> {item, count}
+let wrongItems = {};
 
 function shuffle(arr) {
   const a = [...arr];
@@ -157,11 +219,7 @@ function buildDeck() {
   pool = VOCAB.filter(v => activeCategory === 'all' || v.category === activeCategory);
   weights = {};
   pool.forEach((_, i) => { weights[i] = 3; });
-  currentIndex = -1;
-  score = 0;
-  sessionCount = 0;
-  answered = false;
-  wrongItems = {};
+  currentIndex = -1; score = 0; sessionCount = 0; answered = false; wrongItems = {};
 }
 
 function pickNext() {
@@ -189,8 +247,7 @@ function getDistractors(correct, field) {
   }
   while (chosen.length < 3) {
     const fallback = shuffle(VOCAB).find(v => v[field] !== correct && !chosen.includes(v[field]));
-    if (fallback) chosen.push(fallback[field]);
-    else break;
+    if (fallback) chosen.push(fallback[field]); else break;
   }
   return chosen;
 }
@@ -212,19 +269,19 @@ function renderQuestion() {
   const options = shuffle([correct, ...distractors]);
 
   const w = weights[currentIndex];
-  const diffDot = w >= 7 ? '<span style="color:#ef4444;font-size:0.75rem;margin-left:8px">needs practice</span>'
-                : w <= 1 ? '<span style="color:#22c55e;font-size:0.75rem;margin-left:8px">looking good</span>'
+  const diffDot = w >= 7 ? '<span style="color:var(--danger);font-size:0.72rem;margin-left:8px">needs practice</span>'
+                : w <= 1 ? '<span style="color:var(--success);font-size:0.72rem;margin-left:8px">looking good</span>'
                 : '';
 
   card.innerHTML = `
-    <div class="question-label">${questionLang} ${diffDot}</div>
+    <div class="question-label">${questionLang}${diffDot}</div>
     <div class="question-text">${item[questionField]}</div>
     <div class="question-sub">What is the ${answerLang.toLowerCase()}?</div>
     <div class="options" id="options">
       ${options.map(opt => `<button class="opt-btn" onclick="checkAnswer(this, '${esc(opt)}', '${esc(correct)}')">${opt}</button>`).join('')}
     </div>
     <div class="feedback" id="feedback"></div>
-    <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next question</button>
+    <button class="btn btn-primary next-btn" id="next-btn" onclick="nextQuestion()">Next question →</button>
   `;
   updateScore();
 }
@@ -252,7 +309,7 @@ function checkAnswer(btn, chosen, correct) {
     btn.classList.add('wrong');
     fb.textContent = `Not quite — the answer is: ${correct}`;
     fb.className = 'feedback wrong';
-    weights[currentIndex] = weights[currentIndex] + 3;
+    weights[currentIndex] += 3;
     if (!wrongItems[currentIndex]) wrongItems[currentIndex] = { item: pool[currentIndex], count: 0 };
     wrongItems[currentIndex].count++;
     document.getElementById('next-btn').style.display = 'inline-block';
@@ -264,25 +321,23 @@ function nextQuestion() { renderQuestion(); }
 
 function renderDone() {
   const pct = Math.round((score / SESSION_TARGET) * 100);
-  const hardList = Object.values(wrongItems)
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 8);
+  const hardList = Object.values(wrongItems).sort((a, b) => b.count - a.count).slice(0, 8);
 
   const hardHTML = hardList.length === 0
-    ? '<p style="color:#15803d">No mistakes this round — great work!</p>'
-    : '<p style="color:#64748b;margin-bottom:12px">Keep practising these:</p><ul style="list-style:none;display:flex;flex-direction:column;gap:8px">' +
+    ? '<p style="color:var(--success);margin-bottom:16px">No mistakes this round — great work!</p>'
+    : '<p style="color:var(--text-muted);margin-bottom:10px;font-size:0.85rem">Keep practising these:</p><ul class="wrong-list">' +
       hardList.map(e => `
-        <li style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center">
+        <li class="wrong-item">
           <span><strong>${e.item.czech}</strong> — ${e.item.english}</span>
-          <span style="color:#ef4444;font-size:0.82rem">missed ${e.count}×</span>
+          <span class="missed">missed ${e.count}×</span>
         </li>`).join('') + '</ul>';
 
   document.getElementById('card-area').innerHTML = `
     <div class="done-msg">
       <h2>Round complete!</h2>
       <p>You scored <strong>${score} / ${SESSION_TARGET}</strong> &nbsp;(${pct}%)</p>
-      <div style="margin:20px 0">${hardHTML}</div>
-      <button class="check-btn" onclick="restart()">Another round</button>
+      <div>${hardHTML}</div>
+      <button class="btn btn-primary" onclick="restart()">Another round</button>
     </div>
   `;
 }
@@ -292,28 +347,30 @@ function renderConjugations() {
   const conj = CONJUGATIONS[activeVerbIndex];
 
   const verbBtns = CONJUGATIONS.map((c, i) =>
-    `<button class="verb-btn${i === activeVerbIndex ? ' active' : ''}" onclick="setVerb(${i})">${c.verb}</button>`
+    `<button class="chip${i === activeVerbIndex ? ' active' : ''}" style="border-radius:8px" onclick="setVerb(${i})">${c.verb}</button>`
   ).join('');
 
   const rows = conj.forms.map((f, i) => `
     <tr>
       <td>${f.pronoun}</td>
-      <td><input class="fill-input" id="fill-${i}" placeholder="type form..." autocomplete="off" autocorrect="off" spellcheck="false" onkeydown="if(event.key==='Enter')checkFills()"></td>
-      <td id="hint-${i}" style="color:#94a3b8;font-size:0.85rem"></td>
+      <td><input class="fill-input" id="fill-${i}" placeholder="type form…" autocomplete="off" autocorrect="off" spellcheck="false" onkeydown="if(event.key==='Enter')checkFills()"></td>
+      <td id="hint-${i}" style="color:var(--text-muted);font-size:0.82rem"></td>
     </tr>
   `).join('');
 
   card.innerHTML = `
     <div class="question-label">Conjugations</div>
-    <div class="conj-verb-select">${verbBtns}</div>
+    <div class="chip-row" style="margin-bottom:16px">${verbBtns}</div>
     <div class="conj-intro">Fill in all forms of <strong>${conj.verb}</strong> (${conj.english}):</div>
     <table class="conj-table">
       <thead><tr><th>Pronoun</th><th>Your answer</th><th>Hint</th></tr></thead>
       <tbody>${rows}</tbody>
     </table>
-    <button class="check-btn" onclick="checkFills()">Check</button>
-    <button class="show-all-btn" onclick="showAll()">Show answers</button>
-    <div class="feedback" id="conj-feedback"></div>
+    <div class="conj-actions">
+      <button class="btn btn-primary" onclick="checkFills()">Check</button>
+      <button class="btn btn-ghost" onclick="showAll()">Show answers</button>
+    </div>
+    <div class="feedback" id="conj-feedback" style="margin-top:12px"></div>
   `;
 }
 
@@ -325,9 +382,8 @@ function checkFills() {
   conj.forms.forEach((f, i) => {
     const input = document.getElementById(`fill-${i}`);
     const val = input.value.trim().toLowerCase();
-    const expected = f.form.toLowerCase();
     input.classList.remove('correct', 'wrong');
-    if (val === expected) { input.classList.add('correct'); correct++; }
+    if (val === f.form.toLowerCase()) { input.classList.add('correct'); correct++; }
     else { input.classList.add('wrong'); document.getElementById(`hint-${i}`).textContent = f.form; }
   });
   const fb = document.getElementById('conj-feedback');
@@ -335,14 +391,13 @@ function checkFills() {
     fb.textContent = 'Perfect! All forms correct.';
     fb.className = 'feedback correct';
   } else {
-    fb.textContent = `${correct} of ${conj.forms.length} correct. Wrong answers shown in red above.`;
+    fb.textContent = `${correct} of ${conj.forms.length} correct. Wrong answers shown above.`;
     fb.className = 'feedback wrong';
   }
 }
 
 function showAll() {
-  const conj = CONJUGATIONS[activeVerbIndex];
-  conj.forms.forEach((f, i) => {
+  CONJUGATIONS[activeVerbIndex].forms.forEach((f, i) => {
     const input = document.getElementById(`fill-${i}`);
     input.value = f.form;
     input.classList.add('correct');
@@ -351,14 +406,13 @@ function showAll() {
 }
 
 function updateScore() {
-  const remaining = SESSION_TARGET - sessionCount;
   document.getElementById('score-display').innerHTML =
     `Correct: <strong>${score}</strong> &nbsp;|&nbsp; Question <strong>${Math.min(sessionCount, SESSION_TARGET)}</strong> of ${SESSION_TARGET}`;
 }
 
 function setMode(m, btn) {
   mode = m;
-  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.mode-chip').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   const catControls = document.getElementById('cat-controls');
   const scoreRow = document.getElementById('score-row');
@@ -375,22 +429,20 @@ function setMode(m, btn) {
 
 function restart() {
   if (mode === 'conj') { renderConjugations(); return; }
-  buildDeck();
-  renderQuestion();
+  buildDeck(); renderQuestion();
 }
 
 function buildCatControls() {
   const div = document.getElementById('cat-controls');
   CATEGORIES.forEach(cat => {
     const b = document.createElement('button');
-    b.className = 'cat-btn' + (cat === 'all' ? ' active' : '');
+    b.className = 'chip' + (cat === 'all' ? ' active' : '');
     b.textContent = LABELS[cat];
     b.onclick = () => {
       activeCategory = cat;
-      document.querySelectorAll('.cat-btn').forEach(x => x.classList.remove('active'));
+      document.querySelectorAll('#cat-controls .chip').forEach(x => x.classList.remove('active'));
       b.classList.add('active');
-      buildDeck();
-      renderQuestion();
+      buildDeck(); renderQuestion();
     };
     div.appendChild(b);
   });
