@@ -240,18 +240,27 @@ function pickNext() {
   return pool.findIndex((_, i) => i !== currentIndex);
 }
 
-function getDistractors(correct, field) {
-  const candidates = VOCAB.filter(v => {
-    const val = v[field];
-    return val !== correct && (activeCategory === 'all' || v.category === activeCategory);
-  });
-  const shuffled = shuffle(candidates);
+function getDistractors(correct, field, category) {
+  // prefer same-category words so options are plausibly similar
+  const sameCat = shuffle(VOCAB.filter(v => v[field] !== correct && v.category === category));
   const chosen = [];
-  for (const v of shuffled) {
+  for (const v of sameCat) {
     if (!chosen.includes(v[field])) { chosen.push(v[field]); if (chosen.length === 3) break; }
   }
+  // fall back to active-category pool if same category is too small
+  if (chosen.length < 3) {
+    const rest = shuffle(VOCAB.filter(v =>
+      v[field] !== correct &&
+      !chosen.includes(v[field]) &&
+      (activeCategory === 'all' || v.category === activeCategory)
+    ));
+    for (const v of rest) {
+      if (!chosen.includes(v[field])) { chosen.push(v[field]); if (chosen.length === 3) break; }
+    }
+  }
+  // last resort: anything
   while (chosen.length < 3) {
-    const fallback = shuffle(VOCAB).find(v => v[field] !== correct && !chosen.includes(v[field]));
+    const fallback = VOCAB.find(v => v[field] !== correct && !chosen.includes(v[field]));
     if (fallback) chosen.push(fallback[field]); else break;
   }
   return chosen;
@@ -270,7 +279,7 @@ function renderQuestion() {
   const answerLang    = mode === 'cz-en' ? 'English' : 'Czech';
 
   const correct = item[answerField];
-  const distractors = getDistractors(correct, answerField);
+  const distractors = getDistractors(correct, answerField, item.category);
   const options = shuffle([correct, ...distractors]);
 
   const w = weights[currentIndex];
