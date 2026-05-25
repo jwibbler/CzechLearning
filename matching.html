@@ -10,13 +10,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 .score-info { font-size: 0.82rem; color: var(--text-muted); }
 
-.columns { display: flex; gap: 12px; align-items: flex-start; }
-.col { flex: 1; display: flex; flex-direction: column; gap: 8px; }
-@media (max-width: 560px) { .columns { flex-direction: column; } }
+.columns { display: flex; gap: 8px; align-items: flex-start; }
+.col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
 
 .col-label {
   font-size: 0.67rem;
@@ -24,26 +23,41 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text-muted);
-  padding-bottom: 6px;
+  padding-bottom: 4px;
 }
 .item {
   background: var(--surface);
   border-radius: 9px;
-  padding: 12px 14px;
-  cursor: pointer;
+  padding: 10px 12px;
   border: 1.5px solid var(--border);
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: var(--text);
-  line-height: 1.4;
+  line-height: 1.35;
   transition: border-color 0.15s, background 0.15s;
-  min-height: 48px;
+  min-height: 44px;
   display: flex;
   align-items: center;
+  user-select: none;
+  -webkit-user-select: none;
 }
-.item:hover:not(.matched):not(.wrong) { border-color: var(--success); }
+.item[data-qindex] { cursor: grab; touch-action: none; }
+.item[data-qindex]:active { cursor: grabbing; }
+.item[data-aindex] { cursor: default; }
 .item.selected { border-color: var(--accent); background: var(--accent-light); }
-.item.matched { border-color: var(--success); background: var(--success-bg); color: var(--success); cursor: default; }
+.item.drag-over { border-color: var(--accent); background: var(--accent-light); transform: scale(1.02); }
+.item.dragging { opacity: 0.3; }
+.item.matched { border-color: var(--success); background: var(--success-bg); color: var(--success); }
 .item.wrong { border-color: var(--danger); background: var(--danger-bg); animation: shake 0.35s ease; }
+
+.drag-ghost {
+  position: fixed;
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0.9;
+  transform: scale(1.05) rotate(1deg);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.4);
+  border-color: var(--accent) !important;
+}
 
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
@@ -83,7 +97,7 @@
   <div class="chip-row" id="set-tabs" style="display:none"></div>
 
   <div class="score-bar">
-    <div class="score-info" id="score-info">Match each question to its answer</div>
+    <div class="score-info" id="score-info">Drag a question onto its answer</div>
     <button class="btn btn-ghost" onclick="resetSet()">Reset</button>
   </div>
 
@@ -153,7 +167,7 @@ function buildTabs() {
 function loadSet() {
   const set = MATCHING_SETS[activeSet];
   matched = 0; wrong = 0; selectedQ = null;
-  answers = shuffle(set.pairs.map((p, i) => ({ text: p.a, index: i, matched: false })));
+  answers = shuffle(set.pairs.map((p, i) => ({ text: p.a, index: i })));
   renderGrid();
   document.getElementById('result-banner').style.display = 'none';
   updateScore();
@@ -171,7 +185,7 @@ function renderGrid() {
     el.className = 'item';
     el.dataset.qindex = i;
     el.textContent = pair.q;
-    el.onclick = () => selectQuestion(i);
+    initDrag(el, i);
     qcol.appendChild(el);
   });
 
@@ -180,7 +194,7 @@ function renderGrid() {
     el.className = 'item';
     el.dataset.aindex = i;
     el.textContent = ans.text;
-    el.onclick = () => selectAnswer(i);
+    el.addEventListener('click', () => selectAnswer(i));
     acol.appendChild(el);
   });
 }
@@ -188,9 +202,91 @@ function renderGrid() {
 function getQEl(i) { return document.querySelector(`.item[data-qindex="${i}"]`); }
 function getAEl(i) { return document.querySelector(`.item[data-aindex="${i}"]`); }
 
+// ── Drag-to-match ──
+let dragState = null;
+
+function initDrag(el, qIndex) {
+  el.addEventListener('pointerdown', e => {
+    if (el.classList.contains('matched')) return;
+    e.preventDefault();
+    const rect = el.getBoundingClientRect();
+    dragState = {
+      qIndex, el,
+      startX: e.clientX, startY: e.clientY,
+      offsetX: e.clientX - rect.left,
+      offsetY: e.clientY - rect.top,
+      width: rect.width,
+      ghost: null,
+      moved: false
+    };
+    document.addEventListener('pointermove', onDragMove, { passive: false });
+    document.addEventListener('pointerup', onDragEnd);
+  });
+}
+
+function onDragMove(e) {
+  if (!dragState) return;
+  e.preventDefault();
+  const dx = e.clientX - dragState.startX;
+  const dy = e.clientY - dragState.startY;
+
+  if (!dragState.moved && Math.hypot(dx, dy) > 6) {
+    dragState.moved = true;
+    const g = dragState.el.cloneNode(true);
+    g.classList.add('drag-ghost');
+    g.style.width = dragState.width + 'px';
+    g.style.left = (dragState.startX - dragState.offsetX) + 'px';
+    g.style.top  = (dragState.startY - dragState.offsetY) + 'px';
+    document.body.appendChild(g);
+    dragState.ghost = g;
+    dragState.el.classList.add('dragging');
+    // deselect any tap-selected question
+    if (selectedQ !== null) { getQEl(selectedQ).classList.remove('selected'); selectedQ = null; }
+  }
+
+  if (dragState.moved && dragState.ghost) {
+    dragState.ghost.style.left = (e.clientX - dragState.offsetX) + 'px';
+    dragState.ghost.style.top  = (e.clientY - dragState.offsetY) + 'px';
+
+    // highlight answer under cursor
+    dragState.ghost.style.visibility = 'hidden';
+    const target = document.elementFromPoint(e.clientX, e.clientY);
+    dragState.ghost.style.visibility = '';
+    document.querySelectorAll('.item[data-aindex]').forEach(a => a.classList.remove('drag-over'));
+    const ael = target ? target.closest('.item[data-aindex]') : null;
+    if (ael && !ael.classList.contains('matched')) ael.classList.add('drag-over');
+  }
+}
+
+function onDragEnd(e) {
+  document.removeEventListener('pointermove', onDragMove);
+  document.removeEventListener('pointerup', onDragEnd);
+  document.querySelectorAll('.item[data-aindex]').forEach(a => a.classList.remove('drag-over'));
+
+  if (!dragState) return;
+
+  if (dragState.ghost) {
+    dragState.ghost.remove();
+    dragState.el.classList.remove('dragging');
+  }
+
+  if (dragState.moved) {
+    dragState.ghost = null;
+    dragState.ghost; // no-op, ghost already removed
+    const target = document.elementFromPoint(e.clientX, e.clientY);
+    const ael = target ? target.closest('.item[data-aindex]') : null;
+    if (ael) doMatch(parseInt(ael.dataset.aindex), dragState.qIndex);
+  } else {
+    // short tap — select/deselect question
+    selectQuestion(dragState.qIndex);
+  }
+
+  dragState = null;
+}
+
 function selectQuestion(i) {
   const el = getQEl(i);
-  if (el.classList.contains('matched')) return;
+  if (!el || el.classList.contains('matched')) return;
   if (selectedQ === i) { el.classList.remove('selected'); selectedQ = null; return; }
   if (selectedQ !== null) getQEl(selectedQ).classList.remove('selected');
   selectedQ = i;
@@ -199,12 +295,17 @@ function selectQuestion(i) {
 
 function selectAnswer(aPos) {
   if (selectedQ === null) return;
+  doMatch(aPos, selectedQ);
+}
+
+function doMatch(aPos, qIdx) {
   const ans = answers[aPos];
   const ael = getAEl(aPos);
-  const qel = getQEl(selectedQ);
-  if (ael.classList.contains('matched')) return;
+  const qel = getQEl(qIdx);
+  if (!ael || ael.classList.contains('matched')) return;
+  if (!qel || qel.classList.contains('matched')) return;
 
-  const correctPair = MATCHING_SETS[activeSet].pairs[selectedQ];
+  const correctPair = MATCHING_SETS[activeSet].pairs[qIdx];
   if (ans.text === correctPair.a) {
     qel.classList.remove('selected');
     qel.classList.add('matched');
