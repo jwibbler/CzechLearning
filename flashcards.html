@@ -22,6 +22,8 @@
   transition: transform 0.45s ease;
 }
 .card-inner.flipped { transform: rotateY(180deg); }
+.card-inner.peeking:not(.flipped) { transform: rotateY(180deg); }
+.card-inner.peeking.flipped       { transform: rotateY(0deg); }
 
 .face {
   position: absolute;
@@ -117,13 +119,13 @@
   </div>
   <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
 
-  <div class="card-wrap" onclick="flipCard()">
+  <div class="card-wrap" id="card-wrap">
     <div class="card-inner" id="card-inner">
       <div class="face front">
         <span class="cat-tag" id="cat-tag"></span>
         <div class="label-sm" id="front-label">Czech</div>
         <div class="word" id="front-word"></div>
-        <div class="hint">Tap to reveal</div>
+        <div class="hint">Tap to flip · Hold to peek</div>
       </div>
       <div class="face back">
         <span class="cat-tag" id="cat-tag-back"></span>
@@ -220,6 +222,47 @@ function flipCard() {
   document.getElementById('card-inner').classList.toggle('flipped', flipped);
 }
 
+// ── Hold-to-peek ──
+let peekTimer = null;
+let isPeeking = false;
+let ptrStartX = 0, ptrStartY = 0, ptrMoved = false;
+
+function initCardInteraction() {
+  const wrap = document.getElementById('card-wrap');
+  wrap.addEventListener('pointerdown', e => {
+    e.preventDefault();
+    ptrMoved = false;
+    ptrStartX = e.clientX;
+    ptrStartY = e.clientY;
+    peekTimer = setTimeout(() => {
+      if (!ptrMoved) {
+        isPeeking = true;
+        document.getElementById('card-inner').classList.add('peeking');
+      }
+    }, 400);
+  });
+  wrap.addEventListener('pointermove', e => {
+    if (Math.hypot(e.clientX - ptrStartX, e.clientY - ptrStartY) > 8) {
+      ptrMoved = true;
+      if (!isPeeking) clearTimeout(peekTimer);
+    }
+  });
+  wrap.addEventListener('pointerup', () => {
+    clearTimeout(peekTimer);
+    if (isPeeking) {
+      isPeeking = false;
+      document.getElementById('card-inner').classList.remove('peeking');
+    } else if (!ptrMoved) {
+      flipCard();
+    }
+  });
+  wrap.addEventListener('pointercancel', () => {
+    clearTimeout(peekTimer);
+    isPeeking = false;
+    document.getElementById('card-inner').classList.remove('peeking');
+  });
+}
+
 function nextCard() {
   if (current < deck.length - 1) { current++; resetFlip(); showCard(); }
 }
@@ -291,6 +334,7 @@ function buildControls() {
 
 buildControls();
 buildDeck();
+initCardInteraction();
 </script>
 </body>
 </html>
