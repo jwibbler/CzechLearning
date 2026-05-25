@@ -57,10 +57,18 @@
 
 .card-actions {
   display: flex;
+  flex-direction: column;
   gap: 8px;
-  justify-content: center;
-  flex-wrap: wrap;
   margin-bottom: 8px;
+}
+.card-actions .action-row,
+.card-actions .nav-row {
+  display: flex;
+  gap: 8px;
+}
+.card-actions .action-row .btn,
+.card-actions .nav-row .btn {
+  flex: 1;
 }
 .known-count {
   text-align: center;
@@ -121,10 +129,14 @@
   </div>
 
   <div class="card-actions">
-    <button class="btn" onclick="prevCard()">← Prev</button>
-    <button class="btn btn-warning" onclick="markCard(false)">Still learning</button>
-    <button class="btn btn-success" onclick="markCard(true)">Got it ✓</button>
-    <button class="btn" onclick="nextCard()">Next →</button>
+    <div class="action-row">
+      <button class="btn btn-warning" onclick="markCard(false)">Still learning</button>
+      <button class="btn btn-success" onclick="markCard(true)">Got it ✓</button>
+    </div>
+    <div class="nav-row">
+      <button class="btn" onclick="prevCard()">← Prev</button>
+      <button class="btn" onclick="nextCard()">Next →</button>
+    </div>
   </div>
   <div class="known-count" id="known-count"></div>
 </div>
