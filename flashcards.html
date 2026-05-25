@@ -22,8 +22,29 @@
   transition: transform 0.45s ease;
 }
 .card-inner.flipped { transform: rotateY(180deg); }
-.card-inner.peeking:not(.flipped) { transform: rotateY(180deg); }
-.card-inner.peeking.flipped       { transform: rotateY(0deg); }
+
+.peek-tooltip {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(0.85);
+  background: var(--text);
+  color: var(--bg);
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  pointer-events: none;
+  z-index: 10;
+  white-space: nowrap;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.35);
+  opacity: 0;
+  transition: opacity 0.15s, transform 0.15s;
+}
+.peek-tooltip.visible {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
 
 .face {
   position: absolute;
@@ -120,6 +141,7 @@
   <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
 
   <div class="card-wrap" id="card-wrap">
+    <div class="peek-tooltip" id="peek-tooltip"></div>
     <div class="card-inner" id="card-inner">
       <div class="face front">
         <span class="cat-tag" id="cat-tag"></span>
@@ -222,10 +244,27 @@ function flipCard() {
   document.getElementById('card-inner').classList.toggle('flipped', flipped);
 }
 
-// ── Hold-to-peek ──
+// ── Hold-to-peek tooltip ──
 let peekTimer = null;
 let isPeeking = false;
 let ptrStartX = 0, ptrStartY = 0, ptrMoved = false;
+
+function showPeek() {
+  if (deck.length === 0) return;
+  const card = deck[current];
+  const peekWord = flipped
+    ? (czechFirst ? card.czech   : card.english)
+    : (czechFirst ? card.english : card.czech);
+  const tooltip = document.getElementById('peek-tooltip');
+  tooltip.textContent = peekWord;
+  tooltip.classList.add('visible');
+  isPeeking = true;
+}
+
+function hidePeek() {
+  document.getElementById('peek-tooltip').classList.remove('visible');
+  isPeeking = false;
+}
 
 function initCardInteraction() {
   const wrap = document.getElementById('card-wrap');
@@ -234,12 +273,7 @@ function initCardInteraction() {
     ptrMoved = false;
     ptrStartX = e.clientX;
     ptrStartY = e.clientY;
-    peekTimer = setTimeout(() => {
-      if (!ptrMoved) {
-        isPeeking = true;
-        document.getElementById('card-inner').classList.add('peeking');
-      }
-    }, 400);
+    peekTimer = setTimeout(() => { if (!ptrMoved) showPeek(); }, 400);
   });
   wrap.addEventListener('pointermove', e => {
     if (Math.hypot(e.clientX - ptrStartX, e.clientY - ptrStartY) > 8) {
@@ -249,17 +283,12 @@ function initCardInteraction() {
   });
   wrap.addEventListener('pointerup', () => {
     clearTimeout(peekTimer);
-    if (isPeeking) {
-      isPeeking = false;
-      document.getElementById('card-inner').classList.remove('peeking');
-    } else if (!ptrMoved) {
-      flipCard();
-    }
+    if (isPeeking) { hidePeek(); }
+    else if (!ptrMoved) { flipCard(); }
   });
   wrap.addEventListener('pointercancel', () => {
     clearTimeout(peekTimer);
-    isPeeking = false;
-    document.getElementById('card-inner').classList.remove('peeking');
+    hidePeek();
   });
 }
 
@@ -274,6 +303,7 @@ function prevCard() {
 function resetFlip() {
   flipped = false;
   document.getElementById('card-inner').classList.remove('flipped');
+  hidePeek();
 }
 
 function markCard(isKnown) {
