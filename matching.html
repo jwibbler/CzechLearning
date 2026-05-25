@@ -14,7 +14,7 @@
 }
 .score-info { font-size: 0.82rem; color: var(--text-muted); }
 
-.columns { display: flex; gap: 8px; align-items: flex-start; }
+.columns { display: flex; gap: 8px; align-items: flex-start; position: relative; }
 .col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
 
 .col-label {
@@ -101,7 +101,8 @@
     <button class="btn btn-ghost" onclick="resetSet()">Reset</button>
   </div>
 
-  <div class="columns">
+  <div class="columns" id="columns">
+    <div class="peek-tooltip" id="match-peek"></div>
     <div class="col" id="q-col"><div class="col-label">Questions</div></div>
     <div class="col" id="a-col"><div class="col-label">Answers</div></div>
   </div>
@@ -186,6 +187,7 @@ function renderGrid() {
     el.dataset.qindex = i;
     el.textContent = pair.q;
     initDrag(el, i);
+    initMatchPeek(el, pair.a);
     qcol.appendChild(el);
   });
 
@@ -201,6 +203,35 @@ function renderGrid() {
 
 function getQEl(i) { return document.querySelector(`.item[data-qindex="${i}"]`); }
 function getAEl(i) { return document.querySelector(`.item[data-aindex="${i}"]`); }
+
+function initMatchPeek(el, correctAnswer) {
+  const tooltip = document.getElementById('match-peek');
+  let peekTimer = null, isPeeking = false, ptrMoved = false, ptrStartX = 0, ptrStartY = 0;
+  el.addEventListener('pointerdown', e => {
+    if (el.classList.contains('matched')) return;
+    ptrMoved = false; ptrStartX = e.clientX; ptrStartY = e.clientY;
+    peekTimer = setTimeout(() => {
+      if (!ptrMoved) {
+        tooltip.textContent = correctAnswer;
+        tooltip.classList.add('visible');
+        isPeeking = true;
+      }
+    }, 400);
+  });
+  el.addEventListener('pointermove', e => {
+    if (Math.hypot(e.clientX - ptrStartX, e.clientY - ptrStartY) > 8) {
+      ptrMoved = true;
+      if (!isPeeking) clearTimeout(peekTimer);
+    }
+  });
+  const endPeek = () => {
+    clearTimeout(peekTimer);
+    tooltip.classList.remove('visible');
+    isPeeking = false;
+  };
+  el.addEventListener('pointerup', endPeek);
+  el.addEventListener('pointercancel', endPeek);
+}
 
 // ── Drag-to-match ──
 let dragState = null;

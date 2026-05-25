@@ -52,7 +52,6 @@
   border-radius: var(--radius);
   padding: 24px;
   box-shadow: var(--shadow);
-  position: relative;
 }
 .question-label {
   font-size: 0.67rem;
@@ -289,12 +288,9 @@ function renderQuestion() {
                 : '';
 
   card.innerHTML = `
-    <div class="peek-tooltip" id="quiz-peek"></div>
-    <div id="quiz-q-area" data-correct="${esc(correct)}" style="touch-action:none;user-select:none">
-      <div class="question-label">${questionLang}${diffDot}</div>
-      <div class="question-text">${item[questionField]}</div>
-      <div class="question-sub">What is the ${answerLang.toLowerCase()}? &nbsp;<span style="font-size:0.72rem;color:var(--text-muted)">(hold to peek)</span></div>
-    </div>
+    <div class="question-label">${questionLang}${diffDot}</div>
+    <div class="question-text">${item[questionField]}</div>
+    <div class="question-sub">What is the ${answerLang.toLowerCase()}?</div>
     <div class="options" id="options">
       ${options.map(opt => `<button class="opt-btn" onclick="checkAnswer(this, '${esc(opt)}', '${esc(correct)}')">${opt}</button>`).join('')}
     </div>
@@ -302,7 +298,6 @@ function renderQuestion() {
     <button class="btn btn-primary next-btn" id="next-btn" onclick="nextQuestion()">Next question →</button>
   `;
   updateScore();
-  initQuizPeek();
 }
 
 function esc(s) { return s.replace(/'/g, "\\'").replace(/"/g, '&quot;'); }
@@ -459,37 +454,6 @@ function setMode(m, btn) {
 function restart() {
   if (mode === 'conj') { renderConjugations(); return; }
   buildDeck(); renderQuestion();
-}
-
-function initQuizPeek() {
-  const qArea = document.getElementById('quiz-q-area');
-  const tooltip = document.getElementById('quiz-peek');
-  if (!qArea || !tooltip) return;
-  let peekTimer = null, isPeeking = false, ptrMoved = false, ptrStartX = 0, ptrStartY = 0;
-  qArea.addEventListener('pointerdown', e => {
-    e.preventDefault();
-    ptrMoved = false; ptrStartX = e.clientX; ptrStartY = e.clientY;
-    peekTimer = setTimeout(() => {
-      if (!ptrMoved) {
-        tooltip.textContent = qArea.dataset.correct;
-        tooltip.classList.add('visible');
-        isPeeking = true;
-      }
-    }, 400);
-  });
-  qArea.addEventListener('pointermove', e => {
-    if (Math.hypot(e.clientX - ptrStartX, e.clientY - ptrStartY) > 8) {
-      ptrMoved = true;
-      if (!isPeeking) clearTimeout(peekTimer);
-    }
-  });
-  const endPeek = () => {
-    clearTimeout(peekTimer);
-    tooltip.classList.remove('visible');
-    isPeeking = false;
-  };
-  qArea.addEventListener('pointerup', endPeek);
-  qArea.addEventListener('pointercancel', endPeek);
 }
 
 function buildCatControls() {
