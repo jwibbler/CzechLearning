@@ -166,7 +166,12 @@
     <button class="mode-chip" data-mode="conj" onclick="setMode('conj', this)">Conjugations</button>
   </div>
 
-  <div class="chip-row" id="cat-controls"></div>
+  <div class="filter-header" id="cat-filter-header">
+    <button class="filter-toggle-btn" id="filter-toggle-btn" onclick="toggleFilters()">
+      Topics: <span id="filter-label">All</span> <span class="arrow" id="filter-arrow">▾</span>
+    </button>
+  </div>
+  <div class="chip-row" id="cat-controls" style="display:none"></div>
 
   <div class="score-row" id="score-row">
     <div class="score-display" id="score-display">Score: <strong>0</strong> / 0</div>
@@ -410,18 +415,28 @@ function updateScore() {
     `Correct: <strong>${score}</strong> &nbsp;|&nbsp; Question <strong>${Math.min(sessionCount, SESSION_TARGET)}</strong> of ${SESSION_TARGET}`;
 }
 
+function toggleFilters() {
+  const row = document.getElementById('cat-controls');
+  const arrow = document.getElementById('filter-arrow');
+  const open = row.style.display === 'none';
+  row.style.display = open ? 'flex' : 'none';
+  arrow.textContent = open ? '▴' : '▾';
+}
+
 function setMode(m, btn) {
   mode = m;
   document.querySelectorAll('.mode-chip').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   const catControls = document.getElementById('cat-controls');
+  const filterHeader = document.getElementById('cat-filter-header');
   const scoreRow = document.getElementById('score-row');
   if (m === 'conj') {
+    filterHeader.style.display = 'none';
     catControls.style.display = 'none';
     scoreRow.style.display = 'none';
     renderConjugations();
   } else {
-    catControls.style.display = 'flex';
+    filterHeader.style.display = 'flex';
     scoreRow.style.display = 'flex';
     buildDeck(); renderQuestion();
   }
@@ -442,6 +457,7 @@ function buildCatControls() {
       activeCategory = cat;
       document.querySelectorAll('#cat-controls .chip').forEach(x => x.classList.remove('active'));
       b.classList.add('active');
+      document.getElementById('filter-label').textContent = LABELS[cat];
       buildDeck(); renderQuestion();
     };
     div.appendChild(b);
