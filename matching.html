@@ -205,9 +205,12 @@ function renderGrid() {
 function getQEl(i) { return document.querySelector(`.item[data-qindex="${i}"]`); }
 function getAEl(i) { return document.querySelector(`.item[data-aindex="${i}"]`); }
 
-function showPeek(text) {
+function showPeek(text, x, y) {
   const t = document.getElementById('match-peek');
   t.textContent = text;
+  t.style.left = x + 'px';
+  t.style.top = Math.max(10, y - 80) + 'px';
+  t.style.transform = 'translate(-50%, -100%)';
   t.classList.add('visible');
 }
 function hidePeek() {
@@ -220,7 +223,7 @@ function initAnswerItem(el, aPos) {
     if (el.classList.contains('matched')) return;
     ptrMoved = false; ptrStartX = e.clientX; ptrStartY = e.clientY;
     peekTimer = setTimeout(() => {
-      if (!ptrMoved) { isPeeking = true; showPeek(el.dataset.en); }
+      if (!ptrMoved) { isPeeking = true; showPeek(el.dataset.en, ptrStartX, ptrStartY); }
     }, 400);
   });
   el.addEventListener('pointermove', e => {
@@ -259,7 +262,7 @@ function initDrag(el, qIndex) {
       peekTimer: setTimeout(() => {
         if (dragState && !dragState.moved) {
           dragState.peeking = true;
-          showPeek(el.dataset.en);
+          showPeek(el.dataset.en, dragState.startX, dragState.startY);
         }
       }, 400)
     };
