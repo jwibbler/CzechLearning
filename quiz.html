@@ -180,6 +180,7 @@
 
   <div class="quiz-card" id="card-area"></div>
 </div>
+<div class="peek-tooltip" id="quiz-peek"></div>
 
 <script src="data.js"></script>
 <script>
@@ -292,7 +293,7 @@ function renderQuestion() {
     <div class="question-text">${item[questionField]}</div>
     <div class="question-sub">What is the ${answerLang.toLowerCase()}?</div>
     <div class="options" id="options">
-      ${options.map(opt => `<button class="opt-btn" onclick="checkAnswer(this, '${esc(opt)}', '${esc(correct)}')">${opt}</button>`).join('')}
+      ${options.map(opt => `<button class="opt-btn" data-peek="${esc(lookupPeek(opt, answerField))}" onclick="checkAnswer(this, '${esc(opt)}', '${esc(correct)}')">${opt}</button>`).join('')}
     </div>
     <div class="feedback" id="feedback"></div>
     <button class="btn btn-primary next-btn" id="next-btn" onclick="nextQuestion()">Next question →</button>
@@ -301,6 +302,12 @@ function renderQuestion() {
 }
 
 function esc(s) { return s.replace(/'/g, "\\'").replace(/"/g, '&quot;'); }
+
+function lookupPeek(optText, answerField) {
+  const qField = answerField === 'english' ? 'czech' : 'english';
+  const match = VOCAB.find(v => v[answerField] === optText);
+  return match ? match[qField] : '';
+}
 
 function checkAnswer(btn, chosen, correct) {
   if (answered) return;
@@ -472,6 +479,48 @@ function buildCatControls() {
     div.appendChild(b);
   });
 }
+
+// ── Hold-to-peek on option buttons ──
+(function initQuizPeek() {
+  const cardArea = document.getElementById('card-area');
+  let peekTimer = null;
+  let ptrMoved = false;
+  let ptrStartX = 0, ptrStartY = 0;
+
+  function showPeek(text, x, y) {
+    if (!text) return;
+    const t = document.getElementById('quiz-peek');
+    t.textContent = text;
+    t.style.left = x + 'px';
+    t.style.top = Math.max(10, y - 80) + 'px';
+    t.style.transform = 'translate(-50%, -100%)';
+    t.classList.add('visible');
+  }
+  function hidePeek() {
+    document.getElementById('quiz-peek').classList.remove('visible');
+  }
+
+  cardArea.addEventListener('pointerdown', e => {
+    const btn = e.target.closest('.opt-btn[data-peek]');
+    if (!btn) return;
+    ptrMoved = false;
+    ptrStartX = e.clientX;
+    ptrStartY = e.clientY;
+    peekTimer = setTimeout(() => {
+      if (!ptrMoved) showPeek(btn.dataset.peek, ptrStartX, ptrStartY);
+    }, 400);
+  }, true);
+
+  cardArea.addEventListener('pointermove', e => {
+    if (Math.hypot(e.clientX - ptrStartX, e.clientY - ptrStartY) > 8) {
+      ptrMoved = true;
+      clearTimeout(peekTimer);
+    }
+  }, true);
+
+  cardArea.addEventListener('pointerup', () => { clearTimeout(peekTimer); hidePeek(); }, true);
+  cardArea.addEventListener('pointercancel', () => { clearTimeout(peekTimer); hidePeek(); }, true);
+})();
 
 buildCatControls();
 buildDeck();
