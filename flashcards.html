@@ -61,13 +61,11 @@
   gap: 8px;
   margin-bottom: 8px;
 }
-.card-actions .action-row,
-.card-actions .nav-row {
+.card-actions .action-row {
   display: flex;
   gap: 8px;
 }
-.card-actions .action-row .btn,
-.card-actions .nav-row .btn {
+.card-actions .action-row .btn {
   flex: 1;
 }
 .known-count {
@@ -138,10 +136,6 @@
     <div class="action-row">
       <button class="btn btn-warning" onclick="markCard(false)">Still learning</button>
       <button class="btn btn-success" onclick="markCard(true)">Got it ✓</button>
-    </div>
-    <div class="nav-row">
-      <button class="btn" onclick="prevCard()">← Prev</button>
-      <button class="btn" onclick="nextCard()">Next →</button>
     </div>
   </div>
   <div class="known-count" id="known-count"></div>
@@ -267,14 +261,6 @@ function initCardInteraction() {
     clearTimeout(peekTimer);
     hidePeek();
   });
-}
-
-function nextCard() {
-  if (current < deck.length - 1) { current++; resetFlip(); showCard(); }
-}
-
-function prevCard() {
-  if (current > 0) { current--; resetFlip(); showCard(); }
 }
 
 function resetFlip() {
