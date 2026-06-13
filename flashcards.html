@@ -327,9 +327,20 @@ function buildControls() {
   row.appendChild(dirBtn);
 }
 
+function browserTTS(text) {
+  if (!('speechSynthesis' in window)) return;
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'cs-CZ';
+  speechSynthesis.cancel();
+  speechSynthesis.speak(u);
+}
+
 function playTTS() {
   if (!deck.length) return;
-  new Audio('https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=cs&q=' + encodeURIComponent(deck[current].czech)).play().catch(() => {});
+  const text = deck[current].czech;
+  const audio = new Audio('https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=cs&q=' + encodeURIComponent(text));
+  audio.addEventListener('error', () => browserTTS(text));
+  audio.play().catch(() => browserTTS(text));
 }
 
 buildControls();
