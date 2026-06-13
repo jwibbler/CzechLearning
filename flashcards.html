@@ -138,6 +138,7 @@
       <button class="btn btn-success" onclick="markCard(true)">Got it ✓</button>
     </div>
   </div>
+  <button class="btn btn-ghost" style="width:100%;margin-top:4px;font-size:0.82rem" onclick="playTTS()">🔊 Hear Czech</button>
   <div class="known-count" id="known-count"></div>
 </div>
 
@@ -324,6 +325,11 @@ function buildControls() {
     showCard();
   };
   row.appendChild(dirBtn);
+}
+
+function playTTS() {
+  if (!deck.length) return;
+  new Audio('https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=cs&q=' + encodeURIComponent(deck[current].czech)).play().catch(() => {});
 }
 
 buildControls();

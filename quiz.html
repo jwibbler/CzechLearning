@@ -299,6 +299,7 @@ function renderQuestion() {
     <div class="question-label">${questionLang}${diffDot}</div>
     <div class="question-text">${item[questionField]}</div>
     <div class="question-sub">What is the ${answerLang.toLowerCase()}?</div>
+    <button class="btn btn-ghost" style="margin-bottom:12px;font-size:0.8rem" data-cz="${item.czech.replace(/"/g,'&quot;')}" onclick="playTTS(this.dataset.cz)">🔊 Hear Czech</button>
     <div class="options" id="options">
       ${options.map(opt => `<button class="opt-btn" data-peek="${esc(lookupPeek(opt, answerField))}" onclick="checkAnswer(this, '${esc(opt)}', '${esc(correct)}')">${opt}</button>`).join('')}
     </div>
@@ -309,6 +310,10 @@ function renderQuestion() {
 }
 
 function esc(s) { return s.replace(/'/g, "\\'").replace(/"/g, '&quot;'); }
+
+function playTTS(text) {
+  new Audio('https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=cs&q=' + encodeURIComponent(text)).play().catch(() => {});
+}
 
 function lookupPeek(optText, answerField) {
   const qField = answerField === 'english' ? 'czech' : 'english';
@@ -367,6 +372,7 @@ function renderTypingQuestion() {
     <div class="question-label">English${diffDot}</div>
     <div class="question-text">${item.english}</div>
     <div class="question-sub">Type the Czech:</div>
+    <button class="btn btn-ghost" style="margin-bottom:10px;font-size:0.8rem" data-cz="${item.czech.replace(/"/g,'&quot;')}" onclick="playTTS(this.dataset.cz)">🔊 Hear Czech</button>
     <input class="fill-input" id="type-input" placeholder="česky…" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" style="max-width:100%;margin-bottom:12px" onkeydown="if(event.key==='Enter')checkTyped()">
     <div style="display:flex;gap:8px;margin-bottom:4px">
       <button class="btn btn-primary" onclick="checkTyped()">Check</button>
