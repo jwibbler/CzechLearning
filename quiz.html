@@ -164,6 +164,7 @@
     <button class="mode-chip active" data-mode="cz-en" onclick="setMode('cz-en', this)">Czech → English</button>
     <button class="mode-chip" data-mode="en-cz" onclick="setMode('en-cz', this)">English → Czech</button>
     <button class="mode-chip" data-mode="conj" onclick="setMode('conj', this)">Conjugations</button>
+    <button class="mode-chip" data-mode="type" onclick="setMode('type', this)">Type it</button>
   </div>
 
   <div class="filter-header" id="cat-filter-header">
@@ -212,6 +213,13 @@ let answered = false;
 let activeVerbIndex = 0;
 let wrongItems = {};
 
+function loadWeights() {
+  try { weights = JSON.parse(localStorage.getItem('quizWeights') || '{}'); } catch(e) { weights = {}; }
+}
+function saveWeights() { localStorage.setItem('quizWeights', JSON.stringify(weights)); }
+function getW(item) { return weights[item.czech] || 3; }
+function setW(item, val) { weights[item.czech] = Math.max(1, val); saveWeights(); }
+
 function shuffle(arr) {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
@@ -223,19 +231,17 @@ function shuffle(arr) {
 
 function buildDeck() {
   pool = VOCAB.filter(v => activeCategory === 'all' || v.category === activeCategory);
-  weights = {};
-  pool.forEach((_, i) => { weights[i] = 3; });
   currentIndex = -1; score = 0; sessionCount = 0; answered = false; wrongItems = {};
 }
 
 function pickNext() {
   if (pool.length === 1) return 0;
   let total = 0;
-  pool.forEach((_, i) => { if (i !== currentIndex) total += weights[i]; });
+  pool.forEach((item, i) => { if (i !== currentIndex) total += getW(item); });
   let r = Math.random() * total;
   for (let i = 0; i < pool.length; i++) {
     if (i === currentIndex) continue;
-    r -= weights[i];
+    r -= getW(pool[i]);
     if (r <= 0) return i;
   }
   return pool.findIndex((_, i) => i !== currentIndex);
@@ -268,6 +274,7 @@ function getDistractors(correct, field, category) {
 }
 
 function renderQuestion() {
+  if (mode === 'type') { renderTypingQuestion(); return; }
   const card = document.getElementById('card-area');
   if (sessionCount >= SESSION_TARGET) { renderDone(); return; }
   currentIndex = pickNext();
@@ -283,7 +290,7 @@ function renderQuestion() {
   const distractors = getDistractors(correct, answerField, item.category);
   const options = shuffle([correct, ...distractors]);
 
-  const w = weights[currentIndex];
+  const w = getW(pool[currentIndex]);
   const diffDot = w >= 7 ? '<span style="color:var(--danger);font-size:0.72rem;margin-left:8px">needs practice</span>'
                 : w <= 1 ? '<span style="color:var(--success);font-size:0.72rem;margin-left:8px">looking good</span>'
                 : '';
@@ -323,14 +330,14 @@ function checkAnswer(btn, chosen, correct) {
     fb.textContent = 'Correct!';
     fb.className = 'feedback correct';
     score++;
-    weights[currentIndex] = Math.max(1, weights[currentIndex] - 1);
+    setW(pool[currentIndex], getW(pool[currentIndex]) - 1);
     updateScore();
     setTimeout(nextQuestion, 1600);
   } else {
     btn.classList.add('wrong');
     fb.textContent = `Not quite — the answer is: ${correct}`;
     fb.className = 'feedback wrong';
-    weights[currentIndex] += 3;
+    setW(pool[currentIndex], getW(pool[currentIndex]) + 3);
     if (!wrongItems[currentIndex]) wrongItems[currentIndex] = { item: pool[currentIndex], count: 0 };
     wrongItems[currentIndex].count++;
     document.getElementById('next-btn').style.display = 'inline-block';
@@ -339,6 +346,89 @@ function checkAnswer(btn, chosen, correct) {
 }
 
 function nextQuestion() { renderQuestion(); }
+
+function stripDiacritics(s) {
+  return s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+}
+
+function renderTypingQuestion() {
+  const card = document.getElementById('card-area');
+  if (sessionCount >= SESSION_TARGET) { renderDone(); return; }
+  currentIndex = pickNext();
+  const item = pool[currentIndex];
+  answered = false;
+
+  const w = getW(item);
+  const diffDot = w >= 7 ? '<span style="color:var(--danger);font-size:0.72rem;margin-left:8px">needs practice</span>'
+                : w <= 1 ? '<span style="color:var(--success);font-size:0.72rem;margin-left:8px">looking good</span>'
+                : '';
+
+  card.innerHTML = `
+    <div class="question-label">English${diffDot}</div>
+    <div class="question-text">${item.english}</div>
+    <div class="question-sub">Type the Czech:</div>
+    <input class="fill-input" id="type-input" placeholder="česky…" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" style="max-width:100%;margin-bottom:12px" onkeydown="if(event.key==='Enter')checkTyped()">
+    <div style="display:flex;gap:8px;margin-bottom:4px">
+      <button class="btn btn-primary" onclick="checkTyped()">Check</button>
+      <button class="btn btn-ghost" onclick="skipTyped()">Skip</button>
+    </div>
+    <div class="feedback" id="feedback"></div>
+    <button class="btn btn-primary next-btn" id="next-btn" onclick="nextQuestion()">Next →</button>
+  `;
+  updateScore();
+  document.getElementById('type-input').focus();
+}
+
+function checkTyped() {
+  if (answered) return;
+  const input = document.getElementById('type-input');
+  const typed = input.value.trim();
+  if (!typed) return;
+  answered = true;
+  sessionCount++;
+  const item = pool[currentIndex];
+  const correct = item.czech;
+  const isExact = typed.toLowerCase() === correct.toLowerCase();
+  const isClose = !isExact && stripDiacritics(typed) === stripDiacritics(correct);
+  const fb = document.getElementById('feedback');
+  input.disabled = true;
+  if (isExact || isClose) {
+    input.classList.add('correct');
+    fb.textContent = isClose ? `Correct! (diacritics: ${correct})` : 'Correct!';
+    fb.className = 'feedback correct';
+    score++;
+    setW(item, getW(item) - 1);
+    updateScore();
+    setTimeout(nextQuestion, 1800);
+  } else {
+    input.classList.add('wrong');
+    fb.innerHTML = `Not quite — the answer is: <strong>${correct}</strong>`;
+    fb.className = 'feedback wrong';
+    setW(item, getW(item) + 3);
+    if (!wrongItems[currentIndex]) wrongItems[currentIndex] = { item, count: 0 };
+    wrongItems[currentIndex].count++;
+    document.getElementById('next-btn').style.display = 'inline-block';
+    updateScore();
+  }
+}
+
+function skipTyped() {
+  if (answered) return;
+  answered = true;
+  sessionCount++;
+  const item = pool[currentIndex];
+  const input = document.getElementById('type-input');
+  input.disabled = true;
+  input.classList.add('wrong');
+  const fb = document.getElementById('feedback');
+  fb.innerHTML = `Answer: <strong>${item.czech}</strong>`;
+  fb.className = 'feedback wrong';
+  setW(item, getW(item) + 3);
+  if (!wrongItems[currentIndex]) wrongItems[currentIndex] = { item, count: 0 };
+  wrongItems[currentIndex].count++;
+  document.getElementById('next-btn').style.display = 'inline-block';
+  updateScore();
+}
 
 function renderDone() {
   const pct = Math.round((score / SESSION_TARGET) * 100);
@@ -522,6 +612,7 @@ function buildCatControls() {
   cardArea.addEventListener('pointercancel', () => { clearTimeout(peekTimer); hidePeek(); }, true);
 })();
 
+loadWeights();
 buildCatControls();
 buildDeck();
 renderQuestion();

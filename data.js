@@ -1033,4 +1033,172 @@ const CONJUGATIONS = [
       { pronoun: "oni", form: "říkají", english: "they say" },
     ]
   },
+  {
+    verb: "mluvit",
+    english: "to speak",
+    forms: [
+      { pronoun: "já", form: "mluvím", english: "I speak" },
+      { pronoun: "ty", form: "mluvíš", english: "you speak" },
+      { pronoun: "on/ona", form: "mluví", english: "he/she speaks" },
+      { pronoun: "my", form: "mluvíme", english: "we speak" },
+      { pronoun: "vy", form: "mluvíte", english: "you (pl) speak" },
+      { pronoun: "oni", form: "mluví", english: "they speak" },
+    ]
+  },
+  {
+    verb: "pracovat",
+    english: "to work",
+    forms: [
+      { pronoun: "já", form: "pracuji", english: "I work" },
+      { pronoun: "ty", form: "pracuješ", english: "you work" },
+      { pronoun: "on/ona", form: "pracuje", english: "he/she works" },
+      { pronoun: "my", form: "pracujeme", english: "we work" },
+      { pronoun: "vy", form: "pracujete", english: "you (pl) work" },
+      { pronoun: "oni", form: "pracují", english: "they work" },
+    ]
+  },
+  {
+    verb: "vařit",
+    english: "to cook",
+    forms: [
+      { pronoun: "já", form: "vařím", english: "I cook" },
+      { pronoun: "ty", form: "vaříš", english: "you cook" },
+      { pronoun: "on/ona", form: "vaří", english: "he/she cooks" },
+      { pronoun: "my", form: "vaříme", english: "we cook" },
+      { pronoun: "vy", form: "vaříte", english: "you (pl) cook" },
+      { pronoun: "oni", form: "vaří", english: "they cook" },
+    ]
+  },
+  {
+    verb: "psát",
+    english: "to write",
+    forms: [
+      { pronoun: "já", form: "píšu", english: "I write" },
+      { pronoun: "ty", form: "píšeš", english: "you write" },
+      { pronoun: "on/ona", form: "píše", english: "he/she writes" },
+      { pronoun: "my", form: "píšeme", english: "we write" },
+      { pronoun: "vy", form: "píšete", english: "you (pl) write" },
+      { pronoun: "oni", form: "píšou", english: "they write" },
+    ]
+  },
+  {
+    verb: "číst",
+    english: "to read",
+    forms: [
+      { pronoun: "já", form: "čtu", english: "I read" },
+      { pronoun: "ty", form: "čteš", english: "you read" },
+      { pronoun: "on/ona", form: "čte", english: "he/she reads" },
+      { pronoun: "my", form: "čteme", english: "we read" },
+      { pronoun: "vy", form: "čtete", english: "you (pl) read" },
+      { pronoun: "oni", form: "čtou", english: "they read" },
+    ]
+  },
+  {
+    verb: "jet",
+    english: "to go (by vehicle)",
+    forms: [
+      { pronoun: "já", form: "jedu", english: "I go" },
+      { pronoun: "ty", form: "jedeš", english: "you go" },
+      { pronoun: "on/ona", form: "jede", english: "he/she goes" },
+      { pronoun: "my", form: "jedeme", english: "we go" },
+      { pronoun: "vy", form: "jedete", english: "you (pl) go" },
+      { pronoun: "oni", form: "jedou", english: "they go" },
+    ]
+  },
+  {
+    verb: "moci",
+    english: "to be able to / can",
+    forms: [
+      { pronoun: "já", form: "můžu", english: "I can" },
+      { pronoun: "ty", form: "můžeš", english: "you can" },
+      { pronoun: "on/ona", form: "může", english: "he/she can" },
+      { pronoun: "my", form: "můžeme", english: "we can" },
+      { pronoun: "vy", form: "můžete", english: "you (pl) can" },
+      { pronoun: "oni", form: "můžou", english: "they can" },
+    ]
+  },
+  {
+    verb: "muset",
+    english: "to have to / must",
+    forms: [
+      { pronoun: "já", form: "musím", english: "I must" },
+      { pronoun: "ty", form: "musíš", english: "you must" },
+      { pronoun: "on/ona", form: "musí", english: "he/she must" },
+      { pronoun: "my", form: "musíme", english: "we must" },
+      { pronoun: "vy", form: "musíte", english: "you (pl) must" },
+      { pronoun: "oni", form: "musí", english: "they must" },
+    ]
+  },
+  {
+    verb: "bydlet",
+    english: "to live / reside",
+    forms: [
+      { pronoun: "já", form: "bydlím", english: "I live" },
+      { pronoun: "ty", form: "bydlíš", english: "you live" },
+      { pronoun: "on/ona", form: "bydlí", english: "he/she lives" },
+      { pronoun: "my", form: "bydlíme", english: "we live" },
+      { pronoun: "vy", form: "bydlíte", english: "you (pl) live" },
+      { pronoun: "oni", form: "bydlí", english: "they live" },
+    ]
+  },
+  {
+    verb: "spát",
+    english: "to sleep",
+    forms: [
+      { pronoun: "já", form: "spím", english: "I sleep" },
+      { pronoun: "ty", form: "spíš", english: "you sleep" },
+      { pronoun: "on/ona", form: "spí", english: "he/she sleeps" },
+      { pronoun: "my", form: "spíme", english: "we sleep" },
+      { pronoun: "vy", form: "spíte", english: "you (pl) sleep" },
+      { pronoun: "oni", form: "spí", english: "they sleep" },
+    ]
+  },
+  {
+    verb: "cestovat",
+    english: "to travel",
+    forms: [
+      { pronoun: "já", form: "cestuji", english: "I travel" },
+      { pronoun: "ty", form: "cestuješ", english: "you travel" },
+      { pronoun: "on/ona", form: "cestuje", english: "he/she travels" },
+      { pronoun: "my", form: "cestujeme", english: "we travel" },
+      { pronoun: "vy", form: "cestujete", english: "you (pl) travel" },
+      { pronoun: "oni", form: "cestují", english: "they travel" },
+    ]
+  },
+  {
+    verb: "znát",
+    english: "to know (a person / place)",
+    forms: [
+      { pronoun: "já", form: "znám", english: "I know" },
+      { pronoun: "ty", form: "znáš", english: "you know" },
+      { pronoun: "on/ona", form: "zná", english: "he/she knows" },
+      { pronoun: "my", form: "známe", english: "we know" },
+      { pronoun: "vy", form: "znáte", english: "you (pl) know" },
+      { pronoun: "oni", form: "znají", english: "they know" },
+    ]
+  },
+  {
+    verb: "vědět",
+    english: "to know (a fact)",
+    forms: [
+      { pronoun: "já", form: "vím", english: "I know" },
+      { pronoun: "ty", form: "víš", english: "you know" },
+      { pronoun: "on/ona", form: "ví", english: "he/she knows" },
+      { pronoun: "my", form: "víme", english: "we know" },
+      { pronoun: "vy", form: "víte", english: "you (pl) know" },
+      { pronoun: "oni", form: "vědí", english: "they know" },
+    ]
+  },
+  {
+    verb: "pít",
+    english: "to drink",
+    forms: [
+      { pronoun: "já", form: "piju", english: "I drink" },
+      { pronoun: "ty", form: "piješ", english: "you drink" },
+      { pronoun: "on/ona", form: "pije", english: "he/she drinks" },
+      { pronoun: "my", form: "pijeme", english: "we drink" },
+      { pronoun: "vy", form: "pijete", english: "you (pl) drink" },
+      { pronoun: "oni", form: "pijou", english: "they drink" },
+    ]
+  },
 ];

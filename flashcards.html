@@ -163,7 +163,7 @@ let activeCategory = 'all';
 let czechFirst = true;
 let deck = [];
 let current = 0;
-let known = new Set();
+let known = new Set(JSON.parse(localStorage.getItem('fcKnown') || '[]'));
 let flipped = false;
 
 function shuffleArray(arr) {
@@ -272,6 +272,7 @@ function resetFlip() {
 function markCard(isKnown) {
   const card = deck[current];
   if (isKnown) known.add(card.czech); else known.delete(card.czech);
+  localStorage.setItem('fcKnown', JSON.stringify([...known]));
   setTimeout(() => {
     if (current < deck.length - 1) current++;
     resetFlip();
