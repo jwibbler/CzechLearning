@@ -1201,4 +1201,463 @@ const CONJUGATIONS = [
       { pronoun: "oni", form: "pijou", english: "they drink" },
     ]
   },
+  // ── New conjugations from lessons ──
+  {
+    verb: "dát si",
+    english: "to have / order (food or drink)",
+    forms: [
+      { pronoun: "já", form: "si dám", english: "I'll have" },
+      { pronoun: "ty", form: "si dáš", english: "you'll have" },
+      { pronoun: "on/ona", form: "si dá", english: "he/she'll have" },
+      { pronoun: "my", form: "si dáme", english: "we'll have" },
+      { pronoun: "vy", form: "si dáte", english: "you (pl) will have" },
+      { pronoun: "oni", form: "si dají", english: "they'll have" },
+    ]
+  },
+  {
+    verb: "potřebovat",
+    english: "to need",
+    forms: [
+      { pronoun: "já", form: "potřebuji", english: "I need" },
+      { pronoun: "ty", form: "potřebuješ", english: "you need" },
+      { pronoun: "on/ona", form: "potřebuje", english: "he/she needs" },
+      { pronoun: "my", form: "potřebujeme", english: "we need" },
+      { pronoun: "vy", form: "potřebujete", english: "you (pl) need" },
+      { pronoun: "oni", form: "potřebují", english: "they need" },
+    ]
+  },
+  {
+    verb: "jmenovat se",
+    english: "to be called / named",
+    forms: [
+      { pronoun: "já", form: "jmenuji se", english: "my name is / I am called" },
+      { pronoun: "ty", form: "jmenuješ se", english: "your name is" },
+      { pronoun: "on/ona", form: "jmenuje se", english: "his/her name is" },
+      { pronoun: "my", form: "jmenujeme se", english: "our name is / we are called" },
+      { pronoun: "vy", form: "jmenujete se", english: "your (pl) name is" },
+      { pronoun: "oni", form: "jmenují se", english: "their name is / they are called" },
+    ]
+  },
+  {
+    verb: "mít pravdu",
+    english: "to be right",
+    forms: [
+      { pronoun: "já", form: "mám pravdu", english: "I'm right" },
+      { pronoun: "ty", form: "máš pravdu", english: "you're right" },
+      { pronoun: "on/ona", form: "má pravdu", english: "he/she is right" },
+      { pronoun: "my", form: "máme pravdu", english: "we're right" },
+      { pronoun: "vy", form: "máte pravdu", english: "you (pl) are right" },
+      { pronoun: "oni", form: "mají pravdu", english: "they're right" },
+    ]
+  },
+  {
+    verb: "mít volno",
+    english: "to have free time / a day off",
+    forms: [
+      { pronoun: "já", form: "mám volno", english: "I have free time" },
+      { pronoun: "ty", form: "máš volno", english: "you have free time" },
+      { pronoun: "on/ona", form: "má volno", english: "he/she has free time" },
+      { pronoun: "my", form: "máme volno", english: "we have free time" },
+      { pronoun: "vy", form: "máte volno", english: "you (pl) have free time" },
+      { pronoun: "oni", form: "mají volno", english: "they have free time" },
+    ]
+  },
+  {
+    verb: "mít radost",
+    english: "to be pleased / glad",
+    forms: [
+      { pronoun: "já", form: "mám radost", english: "I'm pleased" },
+      { pronoun: "ty", form: "máš radost", english: "you're pleased" },
+      { pronoun: "on/ona", form: "má radost", english: "he/she is pleased" },
+      { pronoun: "my", form: "máme radost", english: "we're pleased" },
+      { pronoun: "vy", form: "máte radost", english: "you (pl) are pleased" },
+      { pronoun: "oni", form: "mají radost", english: "they're pleased" },
+    ]
+  },
+  {
+    verb: "mít problém",
+    english: "to have a problem",
+    forms: [
+      { pronoun: "já", form: "mám problém", english: "I have a problem" },
+      { pronoun: "ty", form: "máš problém", english: "you have a problem" },
+      { pronoun: "on/ona", form: "má problém", english: "he/she has a problem" },
+      { pronoun: "my", form: "máme problém", english: "we have a problem" },
+      { pronoun: "vy", form: "máte problém", english: "you (pl) have a problem" },
+      { pronoun: "oni", form: "mají problém", english: "they have a problem" },
+    ]
+  },
+  {
+    verb: "mít návštěvu",
+    english: "to have a visitor / guests",
+    forms: [
+      { pronoun: "já", form: "mám návštěvu", english: "I have a visitor" },
+      { pronoun: "ty", form: "máš návštěvu", english: "you have a visitor" },
+      { pronoun: "on/ona", form: "má návštěvu", english: "he/she has a visitor" },
+      { pronoun: "my", form: "máme návštěvu", english: "we have visitors" },
+      { pronoun: "vy", form: "máte návštěvu", english: "you (pl) have a visitor" },
+      { pronoun: "oni", form: "mají návštěvu", english: "they have visitors" },
+    ]
+  },
+  {
+    verb: "mít štěstí",
+    english: "to be lucky",
+    forms: [
+      { pronoun: "já", form: "mám štěstí", english: "I'm lucky" },
+      { pronoun: "ty", form: "máš štěstí", english: "you're lucky" },
+      { pronoun: "on/ona", form: "má štěstí", english: "he/she is lucky" },
+      { pronoun: "my", form: "máme štěstí", english: "we're lucky" },
+      { pronoun: "vy", form: "máte štěstí", english: "you (pl) are lucky" },
+      { pronoun: "oni", form: "mají štěstí", english: "they're lucky" },
+    ]
+  },
+  {
+    verb: "mít smůlu",
+    english: "to be unlucky",
+    forms: [
+      { pronoun: "já", form: "mám smůlu", english: "I'm unlucky" },
+      { pronoun: "ty", form: "máš smůlu", english: "you're unlucky" },
+      { pronoun: "on/ona", form: "má smůlu", english: "he/she is unlucky" },
+      { pronoun: "my", form: "máme smůlu", english: "we're unlucky" },
+      { pronoun: "vy", form: "máte smůlu", english: "you (pl) are unlucky" },
+      { pronoun: "oni", form: "mají smůlu", english: "they're unlucky" },
+    ]
+  },
+  {
+    verb: "mít zlost",
+    english: "to be angry",
+    forms: [
+      { pronoun: "já", form: "mám zlost", english: "I'm angry" },
+      { pronoun: "ty", form: "máš zlost", english: "you're angry" },
+      { pronoun: "on/ona", form: "má zlost", english: "he/she is angry" },
+      { pronoun: "my", form: "máme zlost", english: "we're angry" },
+      { pronoun: "vy", form: "máte zlost", english: "you (pl) are angry" },
+      { pronoun: "oni", form: "mají zlost", english: "they're angry" },
+    ]
+  },
+  {
+    verb: "mít narozeniny",
+    english: "to have a birthday",
+    forms: [
+      { pronoun: "já", form: "mám narozeniny", english: "it's my birthday" },
+      { pronoun: "ty", form: "máš narozeniny", english: "it's your birthday" },
+      { pronoun: "on/ona", form: "má narozeniny", english: "it's his/her birthday" },
+      { pronoun: "my", form: "máme narozeniny", english: "it's our birthday" },
+      { pronoun: "vy", form: "máte narozeniny", english: "it's your (pl) birthday" },
+      { pronoun: "oni", form: "mají narozeniny", english: "it's their birthday" },
+    ]
+  },
+  {
+    verb: "snídat",
+    english: "to have breakfast",
+    forms: [
+      { pronoun: "já", form: "snídám", english: "I have breakfast" },
+      { pronoun: "ty", form: "snídáš", english: "you have breakfast" },
+      { pronoun: "on/ona", form: "snídá", english: "he/she has breakfast" },
+      { pronoun: "my", form: "snídáme", english: "we have breakfast" },
+      { pronoun: "vy", form: "snídáte", english: "you (pl) have breakfast" },
+      { pronoun: "oni", form: "snídají", english: "they have breakfast" },
+    ]
+  },
+  {
+    verb: "obědvat",
+    english: "to have lunch",
+    forms: [
+      { pronoun: "já", form: "obědvám", english: "I have lunch" },
+      { pronoun: "ty", form: "obědváš", english: "you have lunch" },
+      { pronoun: "on/ona", form: "obědvá", english: "he/she has lunch" },
+      { pronoun: "my", form: "obědváme", english: "we have lunch" },
+      { pronoun: "vy", form: "obědváte", english: "you (pl) have lunch" },
+      { pronoun: "oni", form: "obědvají", english: "they have lunch" },
+    ]
+  },
+  {
+    verb: "večeřet",
+    english: "to have dinner",
+    forms: [
+      { pronoun: "já", form: "večeřím", english: "I have dinner" },
+      { pronoun: "ty", form: "večeříš", english: "you have dinner" },
+      { pronoun: "on/ona", form: "večeří", english: "he/she has dinner" },
+      { pronoun: "my", form: "večeříme", english: "we have dinner" },
+      { pronoun: "vy", form: "večeříte", english: "you (pl) have dinner" },
+      { pronoun: "oni", form: "večeří", english: "they have dinner" },
+    ]
+  },
+  {
+    verb: "doufat",
+    english: "to hope (doufat, že… = to hope that…)",
+    forms: [
+      { pronoun: "já", form: "doufám", english: "I hope" },
+      { pronoun: "ty", form: "doufáš", english: "you hope" },
+      { pronoun: "on/ona", form: "doufá", english: "he/she hopes" },
+      { pronoun: "my", form: "doufáme", english: "we hope" },
+      { pronoun: "vy", form: "doufáte", english: "you (pl) hope" },
+      { pronoun: "oni", form: "doufají", english: "they hope" },
+    ]
+  },
+  {
+    verb: "dělat",
+    english: "to do / make (present tense)",
+    forms: [
+      { pronoun: "já", form: "dělám", english: "I do / make" },
+      { pronoun: "ty", form: "děláš", english: "you do / make" },
+      { pronoun: "on/ona", form: "dělá", english: "he/she does / makes" },
+      { pronoun: "my", form: "děláme", english: "we do / make" },
+      { pronoun: "vy", form: "děláte", english: "you (pl) do / make" },
+      { pronoun: "oni", form: "dělají", english: "they do / make" },
+    ]
+  },
+  {
+    verb: "milovat",
+    english: "to love",
+    forms: [
+      { pronoun: "já", form: "miluji", english: "I love" },
+      { pronoun: "ty", form: "miluješ", english: "you love" },
+      { pronoun: "on/ona", form: "miluje", english: "he/she loves" },
+      { pronoun: "my", form: "milujeme", english: "we love" },
+      { pronoun: "vy", form: "milujete", english: "you (pl) love" },
+      { pronoun: "oni", form: "milují", english: "they love" },
+    ]
+  },
+  {
+    verb: "čekat na",
+    english: "to wait for",
+    forms: [
+      { pronoun: "já", form: "čekám na", english: "I wait for / I'm waiting for" },
+      { pronoun: "ty", form: "čekáš na", english: "you wait for" },
+      { pronoun: "on/ona", form: "čeká na", english: "he/she waits for" },
+      { pronoun: "my", form: "čekáme na", english: "we wait for" },
+      { pronoun: "vy", form: "čekáte na", english: "you (pl) wait for" },
+      { pronoun: "oni", form: "čekají na", english: "they wait for" },
+    ]
+  },
+  {
+    verb: "těšit se na",
+    english: "to look forward to",
+    forms: [
+      { pronoun: "já", form: "těším se na", english: "I look forward to" },
+      { pronoun: "ty", form: "těšíš se na", english: "you look forward to" },
+      { pronoun: "on/ona", form: "těší se na", english: "he/she looks forward to" },
+      { pronoun: "my", form: "těšíme se na", english: "we look forward to" },
+      { pronoun: "vy", form: "těšíte se na", english: "you (pl) look forward to" },
+      { pronoun: "oni", form: "těší se na", english: "they look forward to" },
+    ]
+  },
+  {
+    verb: "pršet",
+    english: "to rain (impersonal — 3rd person only)",
+    forms: [
+      { pronoun: "on/ono", form: "prší", english: "it's raining / it rains" },
+    ]
+  },
+  {
+    verb: "sněžit",
+    english: "to snow (impersonal — 3rd person only)",
+    forms: [
+      { pronoun: "on/ono", form: "sněží", english: "it's snowing / it snows" },
+    ]
+  },
+  {
+    verb: "svítit",
+    english: "to shine (slunce svítí = the sun shines)",
+    forms: [
+      { pronoun: "já", form: "svítím", english: "I shine / I'm on (light)" },
+      { pronoun: "ty", form: "svítíš", english: "you shine" },
+      { pronoun: "on/ona", form: "svítí", english: "he/she/it shines" },
+      { pronoun: "my", form: "svítíme", english: "we shine" },
+      { pronoun: "vy", form: "svítíte", english: "you (pl) shine" },
+      { pronoun: "oni", form: "svítí", english: "they shine" },
+    ]
+  },
+  {
+    verb: "foukat",
+    english: "to blow / be windy (vítr fouká = the wind blows)",
+    forms: [
+      { pronoun: "já", form: "foukám", english: "I blow" },
+      { pronoun: "ty", form: "foukáš", english: "you blow" },
+      { pronoun: "on/ona", form: "fouká", english: "he/she/it blows" },
+      { pronoun: "my", form: "foukáme", english: "we blow" },
+      { pronoun: "vy", form: "foukáte", english: "you (pl) blow" },
+      { pronoun: "oni", form: "foukají", english: "they blow" },
+    ]
+  },
+  {
+    verb: "hledat",
+    english: "to look for / search",
+    forms: [
+      { pronoun: "já", form: "hledám", english: "I look for" },
+      { pronoun: "ty", form: "hledáš", english: "you look for" },
+      { pronoun: "on/ona", form: "hledá", english: "he/she looks for" },
+      { pronoun: "my", form: "hledáme", english: "we look for" },
+      { pronoun: "vy", form: "hledáte", english: "you (pl) look for" },
+      { pronoun: "oni", form: "hledají", english: "they look for" },
+    ]
+  },
+  {
+    verb: "vstávat",
+    english: "to get up (regularly)",
+    forms: [
+      { pronoun: "já", form: "vstávám", english: "I get up" },
+      { pronoun: "ty", form: "vstáváš", english: "you get up" },
+      { pronoun: "on/ona", form: "vstává", english: "he/she gets up" },
+      { pronoun: "my", form: "vstáváme", english: "we get up" },
+      { pronoun: "vy", form: "vstáváte", english: "you (pl) get up" },
+      { pronoun: "oni", form: "vstávají", english: "they get up" },
+    ]
+  },
+  {
+    verb: "uklízet",
+    english: "to tidy up / clean",
+    forms: [
+      { pronoun: "já", form: "uklízím", english: "I tidy up" },
+      { pronoun: "ty", form: "uklízíš", english: "you tidy up" },
+      { pronoun: "on/ona", form: "uklízí", english: "he/she tidies up" },
+      { pronoun: "my", form: "uklízíme", english: "we tidy up" },
+      { pronoun: "vy", form: "uklízíte", english: "you (pl) tidy up" },
+      { pronoun: "oni", form: "uklízí", english: "they tidy up" },
+    ]
+  },
+  {
+    verb: "otevřít",
+    english: "to open (once / perfective)",
+    forms: [
+      { pronoun: "já", form: "otevřu", english: "I open / will open" },
+      { pronoun: "ty", form: "otevřeš", english: "you open" },
+      { pronoun: "on/ona", form: "otevře", english: "he/she opens" },
+      { pronoun: "my", form: "otevřeme", english: "we open" },
+      { pronoun: "vy", form: "otevřete", english: "you (pl) open" },
+      { pronoun: "oni", form: "otevřou", english: "they open" },
+    ]
+  },
+  {
+    verb: "pomoct",
+    english: "to help (once / perfective)",
+    forms: [
+      { pronoun: "já", form: "pomůžu", english: "I help / will help" },
+      { pronoun: "ty", form: "pomůžeš", english: "you help" },
+      { pronoun: "on/ona", form: "pomůže", english: "he/she helps" },
+      { pronoun: "my", form: "pomůžeme", english: "we help" },
+      { pronoun: "vy", form: "pomůžete", english: "you (pl) help" },
+      { pronoun: "oni", form: "pomůžou", english: "they help" },
+    ]
+  },
+  {
+    verb: "nakupovat",
+    english: "to shop / go shopping",
+    forms: [
+      { pronoun: "já", form: "nakupuji", english: "I shop" },
+      { pronoun: "ty", form: "nakupuješ", english: "you shop" },
+      { pronoun: "on/ona", form: "nakupuje", english: "he/she shops" },
+      { pronoun: "my", form: "nakupujeme", english: "we shop" },
+      { pronoun: "vy", form: "nakupujete", english: "you (pl) shop" },
+      { pronoun: "oni", form: "nakupují", english: "they shop" },
+    ]
+  },
+  {
+    verb: "končit",
+    english: "to finish / end (regularly)",
+    forms: [
+      { pronoun: "já", form: "končím", english: "I finish" },
+      { pronoun: "ty", form: "končíš", english: "you finish" },
+      { pronoun: "on/ona", form: "končí", english: "he/she finishes" },
+      { pronoun: "my", form: "končíme", english: "we finish" },
+      { pronoun: "vy", form: "končíte", english: "you (pl) finish" },
+      { pronoun: "oni", form: "končí", english: "they finish" },
+    ]
+  },
+  {
+    verb: "začít",
+    english: "to start (once / perfective)",
+    forms: [
+      { pronoun: "já", form: "začnu", english: "I start / will start" },
+      { pronoun: "ty", form: "začneš", english: "you start" },
+      { pronoun: "on/ona", form: "začne", english: "he/she starts" },
+      { pronoun: "my", form: "začneme", english: "we start" },
+      { pronoun: "vy", form: "začnete", english: "you (pl) start" },
+      { pronoun: "oni", form: "začnou", english: "they start" },
+    ]
+  },
+  {
+    verb: "začínat",
+    english: "to start (regularly / imperfective)",
+    forms: [
+      { pronoun: "já", form: "začínám", english: "I start / begin" },
+      { pronoun: "ty", form: "začínáš", english: "you start" },
+      { pronoun: "on/ona", form: "začíná", english: "he/she starts" },
+      { pronoun: "my", form: "začínáme", english: "we start" },
+      { pronoun: "vy", form: "začínáte", english: "you (pl) start" },
+      { pronoun: "oni", form: "začínají", english: "they start" },
+    ]
+  },
+  {
+    verb: "myslet",
+    english: "to think",
+    forms: [
+      { pronoun: "já", form: "myslím", english: "I think" },
+      { pronoun: "ty", form: "myslíš", english: "you think" },
+      { pronoun: "on/ona", form: "myslí", english: "he/she thinks" },
+      { pronoun: "my", form: "myslíme", english: "we think" },
+      { pronoun: "vy", form: "myslíte", english: "you (pl) think" },
+      { pronoun: "oni", form: "myslí", english: "they think" },
+    ]
+  },
+  {
+    verb: "studovat",
+    english: "to study",
+    forms: [
+      { pronoun: "já", form: "studuji", english: "I study" },
+      { pronoun: "ty", form: "studuješ", english: "you study" },
+      { pronoun: "on/ona", form: "studuje", english: "he/she studies" },
+      { pronoun: "my", form: "studujeme", english: "we study" },
+      { pronoun: "vy", form: "studujete", english: "you (pl) study" },
+      { pronoun: "oni", form: "studují", english: "they study" },
+    ]
+  },
+  {
+    verb: "odpočívat",
+    english: "to rest",
+    forms: [
+      { pronoun: "já", form: "odpočívám", english: "I rest" },
+      { pronoun: "ty", form: "odpočíváš", english: "you rest" },
+      { pronoun: "on/ona", form: "odpočívá", english: "he/she rests" },
+      { pronoun: "my", form: "odpočíváme", english: "we rest" },
+      { pronoun: "vy", form: "odpočíváte", english: "you (pl) rest" },
+      { pronoun: "oni", form: "odpočívají", english: "they rest" },
+    ]
+  },
+  {
+    verb: "umět",
+    english: "to know how to / can",
+    forms: [
+      { pronoun: "já", form: "umím", english: "I know how to / I can" },
+      { pronoun: "ty", form: "umíš", english: "you know how to" },
+      { pronoun: "on/ona", form: "umí", english: "he/she knows how to" },
+      { pronoun: "my", form: "umíme", english: "we know how to" },
+      { pronoun: "vy", form: "umíte", english: "you (pl) know how to" },
+      { pronoun: "oni", form: "umí", english: "they know how to" },
+    ]
+  },
+  {
+    verb: "hrát",
+    english: "to play (hrát na + acc = to play an instrument)",
+    forms: [
+      { pronoun: "já", form: "hraju", english: "I play" },
+      { pronoun: "ty", form: "hraješ", english: "you play" },
+      { pronoun: "on/ona", form: "hraje", english: "he/she plays" },
+      { pronoun: "my", form: "hrajeme", english: "we play" },
+      { pronoun: "vy", form: "hrajete", english: "you (pl) play" },
+      { pronoun: "oni", form: "hrají", english: "they play" },
+    ]
+  },
+  {
+    verb: "hrát si",
+    english: "to play (for fun / children's play)",
+    forms: [
+      { pronoun: "já", form: "si hraju", english: "I play / I'm playing" },
+      { pronoun: "ty", form: "si hraješ", english: "you play" },
+      { pronoun: "on/ona", form: "si hraje", english: "he/she plays" },
+      { pronoun: "my", form: "si hrajeme", english: "we play" },
+      { pronoun: "vy", form: "si hrajete", english: "you (pl) play" },
+      { pronoun: "oni", form: "si hrají", english: "they play" },
+    ]
+  },
 ];
